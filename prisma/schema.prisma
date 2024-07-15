@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id        String    @id @default(uuid())
+  name      String    @db.VarChar(256)
+  surname   String    @db.VarChar(256)
+  ein       String    @unique
+  active    Boolean   @default(true)
+  Contact   Contact[]
+  User      User[]
+  Service   Service[]
+  imutable  Boolean
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([name])
+  @@index([ein])
+  @@map("companies")
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(256)
+  email     String   @db.VarChar(256)
+  phone     String
+  active    Boolean  @default(true)
+  Company   Company  @relation(fields: [companyId], references: [id])
+  companyId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique(fields: [email, companyId], name: "contactUnique")
+  @@index([name])
+  @@index([email])
+  @@index([phone])
+  @@map("contacts")
+}
+
+model User {
+  id         String       @id @default(uuid())
+  name       String       @db.VarChar(256)
+  email      String       @unique @db.VarChar(256)
+  phone      String
+  hash       String       @db.LongText
+  active     Boolean      @default(true)
+  attempts   Int          @default(0)
+  Company    Company      @relation(fields: [companyId], references: [id])
+  companyId  String
+  Rule       Rule         @relation(fields: [ruleId], references: [id])
+  ruleId     String
+  imutable   Boolean
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  UserLogins UserLogins[]
+
+  @@unique(fields: [email, companyId], name: "userUnique")
+  @@index([name])
+  @@index([email])
+  @@index([phone])
+  @@map("users")
+}
+
+model UserLogins {
+  id          Int       @id @default(autoincrement())
+  User        User      @relation(fields: [userId], references: [id])
+  userId      String
+  token       String?   @db.LongText
+  action      String
+  fingerprint String?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("userlogins")
+}
+
+model Service {
+  id          String    @id @default(uuid())
+  name        String    @unique @db.VarChar(256)
+  description String    @db.LongText
+  active      Boolean   @default(true)
+  Company     Company[]
+  Police      Police[]
+  imutable    Boolean
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("services")
+}
+
+model Police {
+  id          String   @id @default(uuid())
+  Service     Service  @relation(fields: [serviceId], references: [id])
+  serviceId   String
+  description String   @db.LongText
+  action      String
+  active      Boolean  @default(true)
+  Rule        Rule[]
+  imutable    Boolean
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique(fields: [serviceId, action], name: "uniquePolice")
+  @@index([action])
+  @@map("polices")
+}
+
+model Rule {
+  id          String   @id @default(uuid())
+  name        String   @unique @db.VarChar(256)
+  description String   @db.Text()
+  Police      Police[]
+  User        User[]
+  imutable    Boolean
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@map("rules")
+}

@@ -1,0 +1,52 @@
+import Elysia, { t } from "elysia";
+import { Login } from "../../models/user/Login";
+import { ILoginBody } from "../../models/user/UserInterface";
+
+export default class LoginController {
+  constructor(readonly server: Elysia) {
+    server.post(
+      "/user/login",
+      async ({ body: { email, password}, set }) => {
+        try {
+          // const { email, password } = body as ILoginBody;
+          const result = await Login({ email, password });
+
+          set.headers["Authorization"] = `Bearer ${result.token}`;
+
+          set.status = 200;
+          return {
+            token: result.token,
+          };
+        } catch (error: any) {
+          if (error.message.includes("Unauthorized")) set.status = 401;
+          else set.status = 500;
+
+          return {
+            message: error.message,
+          };
+        }
+      },
+      {
+        type: "application/json",
+
+        detail: {
+          tags: ["Usuários"],
+          description: "Faz o login do usuário",
+          operationId: "LoginUsuario",
+          summary: "Login",
+        },
+
+        body: t.Object({
+          email: t.String(),
+          password: t.String(),
+        }),
+
+        response: {
+          200: t.Object({ token: t.String() }),
+          401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
+          500: t.Object({ message: t.String() }, { description: "Server error" }),
+        },
+      }
+    );
+  }
+}

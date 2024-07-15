@@ -1,0 +1,31 @@
+{
+  "name": "user-service",
+  "version": "1.0.50",
+  "prisma": {
+    "seed": "bun prisma/seed.ts"
+  },
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "db.generate": "bunx prisma generate",
+    "db.push": "bunx prisma db push --force-reset",
+    "db.seed": "bunx prisma db seed",
+    "db.studio": "bunx prisma studio"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.606.0",
+    "@elysiajs/cors": "^1.0.2",
+    "@elysiajs/swagger": "^1.0.5",
+    "@prisma/client": "^5.16.1",
+    "@prisma/extension-read-replicas": "^0.3.0",
+    "elysia": "^1.0.26",
+    "elysia-compression": "^0.0.7",
+    "elysia-rate-limit": "^4.1.0",
+    "jose": "^5.6.2"
+  },
+  "devDependencies": {
+    "bun-types": "^1.1.17",
+    "prisma": "^5.16.1"
+  },
+  "module": "src/index.js"
+}
