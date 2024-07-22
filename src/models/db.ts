@@ -7,7 +7,8 @@ export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
     errorFormat: "pretty",
-    log: ["query", "info", "warn", "error"],
+    // log: ["query", "info", "warn", "error"],
+    log: ["info", "warn", "error"],
   }).$extends(
     readReplicas({
       url: process.env.DATABASE_URL_REPLICA!,
