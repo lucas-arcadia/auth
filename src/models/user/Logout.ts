@@ -3,7 +3,6 @@ import { prisma } from "../db";
 
 export async function Logout(tokenPayload: ITokenPayload): Promise<any> {
   try {
-    console.log("A")
     // Procura o usuário
     const user = await prisma.user.findUnique({
       where: {
