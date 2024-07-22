@@ -1,7 +1,7 @@
+import { Elysia } from "elysia";
 import cors from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
-import { Elysia } from "elysia";
-import { compression } from "elysia-compression";
+import compression from "elysia-compress";
 // import { rateLimit } from "elysia-rate-limit"
 
 // Companies
