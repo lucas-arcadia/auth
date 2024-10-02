@@ -91,7 +91,7 @@ model Service {
   description String    @db.LongText
   active      Boolean   @default(true)
   Company     Company[]
-  Police      Police[]
+  Policy      Policy[]
   imutable    Boolean
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -99,7 +99,7 @@ model Service {
   @@map("services")
 }
 
-model Police {
+model Policy {
   id          String   @id @default(uuid())
   Service     Service  @relation(fields: [serviceId], references: [id])
   serviceId   String
@@ -111,16 +111,16 @@ model Police {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique(fields: [serviceId, action], name: "uniquePolice")
+  @@unique(fields: [serviceId, action], name: "uniquePolicy")
   @@index([action])
-  @@map("polices")
+  @@map("policies")
 }
 
 model Rule {
   id          String   @id @default(uuid())
   name        String   @unique @db.VarChar(256)
   description String   @db.Text()
-  Police      Police[]
+  Policy      Policy[]
   User        User[]
   imutable    Boolean
   createdAt   DateTime @default(now())
