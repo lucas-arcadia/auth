@@ -21,6 +21,7 @@ export interface IUser {
 
 export interface IAddUser {
   tokenPayload: ITokenPayload;
+  ip: string;
   email: string;
   name: string;
   password: string;
@@ -31,6 +32,7 @@ export interface IAddUser {
 
 export interface IGetUser {
   tokenPayload: ITokenPayload;
+  ip: string;
   id?: string;
   companyId?: string;
   depth?: string;
@@ -38,6 +40,7 @@ export interface IGetUser {
 
 export interface IListUserQuery {
   tokenPayload: ITokenPayload;
+  ip: string;
   companyId?: string;
   depth?: string;
   limit?: string;

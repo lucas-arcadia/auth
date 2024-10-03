@@ -129,3 +129,24 @@ model Rule {
   @@index([name])
   @@map("rules")
 }
+
+model AuditTrail {
+  id           String   @id @default(uuid())
+  action       String   @db.VarChar(256)
+  entity       String   @db.VarChar(256)
+  entityId     String   @db.VarChar(256)
+  userId       String
+  what         String   @db.Text()
+  ip           String   @db.VarChar(256)
+  previousHash String?  @db.VarChar(256)
+  currentHash  String   @unique @db.VarChar(256)
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([entityId])
+  @@index([ip])
+  @@index([createdAt])
+  @@map("auditTrails")
+}

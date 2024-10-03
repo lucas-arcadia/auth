@@ -1,4 +1,5 @@
 import Elysia, { t } from "elysia";
+import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { AddUser } from "../../models/user/AddUser";
 import { IAddUser } from "../../models/user/UserInterface";
@@ -7,6 +8,7 @@ import { ElysiaHeader, ElysiaResponse } from "../common/common";
 export default class AddUserController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -23,14 +25,14 @@ export default class AddUserController {
 
       .post(
         "/user",
-        async ({ body, set, tokenPayload }) => {
+        async ({ body, ip, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             const { name, email, phone, password, companyId, ruleId } = body as IAddUser;
 
             set.status = 201;
-            return await AddUser({ tokenPayload, name, email, phone, password, companyId, ruleId });
+            return await AddUser({ tokenPayload, name, email, phone, password, companyId, ruleId, ip });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -47,9 +49,9 @@ export default class AddUserController {
           type: "application/json",
 
           detail: {
-            tags: ["Usuários"],
-            summary: "Adicionar",
-            description: "Adiciona um novo usuário a uma empresa no sistema.",
+            tags: ["Users"],
+            summary: "Add user",
+            description: "Add a new user to a company in the system.",
             operationId: "AddUser",
           },
 
@@ -62,6 +64,7 @@ export default class AddUserController {
             email: t.String(),
             phone: t.String(),
             password: t.String(),
+            companyId: t.String(),
             ruleId: t.String(),
           }),
 
@@ -79,7 +82,7 @@ export default class AddUserController {
               updatedAt: t.Date(),
               Company: t.Optional(t.Any()),
               Rule: t.Optional(t.Any()),
-            }),
+            }, { description: "Success" }),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

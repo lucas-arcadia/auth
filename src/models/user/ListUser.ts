@@ -1,3 +1,4 @@
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 import { IListUser, IListUserQuery } from "./UserInterface";
@@ -74,6 +75,15 @@ export async function ListUser(input: IListUserQuery): Promise<IListUser> {
       nextPage: page + 1 > totalPages ? null : page + 1,
     };
   } catch (error) {
+    new AuditTrail(
+      "ListUser",
+      "User",
+      `error: ${error}`,
+      input.tokenPayload.u,
+      JSON.stringify(error),
+      input.ip,
+    );
+
     throw error;
   }
 }

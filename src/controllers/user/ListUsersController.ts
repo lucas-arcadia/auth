@@ -1,4 +1,5 @@
 import Elysia, { t } from "elysia";
+import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { ListUser } from "../../models/user/ListUser";
 import { ElysiaHeader, ElysiaPaginationReturn, ElysiaQuery, ElysiaResponse } from "../common/common";
@@ -6,6 +7,7 @@ import { ElysiaHeader, ElysiaPaginationReturn, ElysiaQuery, ElysiaResponse } fro
 export default class ListUserController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -24,12 +26,12 @@ export default class ListUserController {
 
       .get(
         "/user/list",
-        async ({ query: { companyId, depth, limit, page }, set, tokenPayload }) => {
+        async ({ ip, query: { companyId, depth, limit, page }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-            return await ListUser({ tokenPayload, companyId, depth, limit, page });
+            return await ListUser({ tokenPayload, ip, companyId, depth, limit, page });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;

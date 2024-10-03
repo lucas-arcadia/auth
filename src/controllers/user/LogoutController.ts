@@ -1,6 +1,7 @@
 import Elysia, { t } from "elysia";
 import jwt from "../../libs/jwt";
 import { Logout } from "../../models/user/Logout";
+import { ElysiaHeader, ElysiaResponse } from "../common/common";
 
 export default class LogoutController {
   constructor(readonly server: Elysia) {
@@ -45,24 +46,21 @@ export default class LogoutController {
           type: "application/json",
 
           detail: {
-            tags: ["Usuários"],
-            description: "Faz o logout do usuário",
-            operationId: "LogoutUsuario",
+            tags: ["Users"],
+            description: "Logout user",
+            operationId: "LogoutUser",
             summary: "Logout",
           },
 
           headers: t.Object({
-            authorization: t.String({
-              description: "Token authorization",
-              error: JSON.stringify({ message: "Token is required" }),
-            }),
+            authorization: ElysiaHeader.authorization,
           }),
 
           response: {
-            200: t.Object({ message: t.String() }),
-            401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
-            404: t.Object({ message: t.String() }, { description: "User not found" }),
-            500: t.Object({ message: t.String() }, { description: "Server error" }),
+            200: t.Object({ message: t.String() }, { description: "Success" }),
+            401: ElysiaResponse[401],
+            404: ElysiaResponse[404],
+            500: ElysiaResponse[500],
           },
         }
       );

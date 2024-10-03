@@ -1,12 +1,13 @@
 import Elysia, { t } from "elysia";
+import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { CheckPermission } from "../../models/user/CheckPermission";
-import { IUserPermissionQuery } from "../../models/user/UserInterface";
-import { Services } from "../../libs/permisstions";
+import { ElysiaHeader, ElysiaResponse } from "../common/common";
 
 export default class CheckPermissionController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -23,12 +24,12 @@ export default class CheckPermissionController {
 
       .get(
         "/user/checkpermission/:service/:action",
-        async ({ params: { service, action }, set, tokenPayload }) => {
+        async ({ ip, params: { service, action }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-            const result = await CheckPermission(tokenPayload, service, action);
+            const result = await CheckPermission(tokenPayload, ip, service, action);
             if (!result)
               return {
                 message: false,
@@ -47,27 +48,24 @@ export default class CheckPermissionController {
         },
         {
           detail: {
-            tags: ["Usuários"],
-            summary: "Verifica permissão",
-            description: "Verifica se o usuário tem permissão ou não com base no serviço e na ação.",
+            tags: ["Users"],
+            summary: "Check permission",
+            description: "Check if the user has permission or not based on the service and action.",
             operationId: "CheckPermission",
           },
 
           headers: t.Object({
-            authorization: t.String({
-              description: "Token authorization",
-              error: JSON.stringify({ message: "Token is required" }),
-            }),
+            authorization: ElysiaHeader.authorization,
           }),
 
           params: t.Object({
-            service: t.String({ description: "Nome do serviço" }),
-            action: t.String({ description: "Nome da ação" }),
+            service: t.String({ description: "Service name", error: JSON.stringify({ message: "Service name is required" }) }),
+            action: t.String({ description: "Action name", error: JSON.stringify({ message: "Action name is required" }) }),
           }),
 
           response: {
-            200: t.Object({ message: t.Boolean() }),
-            401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
+            200: t.Object({ message: t.Boolean() }, { description: "Success" }),
+            401: ElysiaResponse[401],
           },
         }
       );

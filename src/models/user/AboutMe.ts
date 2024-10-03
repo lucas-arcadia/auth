@@ -1,3 +1,4 @@
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 import { IGetUser, IUser } from "./UserInterface";
@@ -41,7 +42,7 @@ export async function AboutMe(input: IGetUser): Promise<IUser> {
           select: {
             name: true,
             description: true,
-            Police: {
+            Policy: {
               select: {
                 id: true,
                 description: true,
@@ -69,6 +70,15 @@ export async function AboutMe(input: IGetUser): Promise<IUser> {
 
     return user;
   } catch (error) {
+    new AuditTrail(
+      "AddUser",
+      "User",
+      `error: ${error}`,
+      input.tokenPayload.u,
+      JSON.stringify(error),
+      input.ip,
+    );
+    
     throw error;
   }
 }

@@ -2,7 +2,7 @@ import Elysia, { t } from "elysia";
 import jwt from "../../libs/jwt";
 import { UpdateUser } from "../../models/user/UpdateUser";
 import { IUpdateUser } from "../../models/user/UserInterface";
-import { ElysiaHeader, ElysiaResponse } from "../common/common";
+import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
 
 export default class UpdateUserController {
   constructor(readonly server: Elysia) {
@@ -25,7 +25,7 @@ export default class UpdateUserController {
 
       .put(
         "/user/:id",
-        async ({ body, params: { id }, set, tokenPayload }) => {
+        async ({ body, query: { companyId }, params: { id }, set, tokenPayload }) => {
           console.log(body, id)
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
@@ -33,7 +33,7 @@ export default class UpdateUserController {
             const { name, phone, active, attempts, ruleId } = body as IUpdateUser;
 
             set.status = 200;
-            return await UpdateUser({ tokenPayload, id, name, phone, active, attempts, ruleId });
+            return await UpdateUser({ tokenPayload, id, name, phone, active, attempts, ruleId, companyId });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -57,6 +57,10 @@ export default class UpdateUserController {
 
           headers: t.Object({
             authorization: ElysiaHeader.authorization,
+          }),
+
+          query: t.Object({
+            companyId: ElysiaQuery.companyId,
           }),
 
           params: t.Object({

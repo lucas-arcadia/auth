@@ -15,7 +15,7 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
     if (input.companyId) {
       if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
         if (input.companyId === 'all') {
-          companyId = undefined;
+          companyId = undefined; // Allow access to all users
         } else {
           companyId = input.companyId;
         }

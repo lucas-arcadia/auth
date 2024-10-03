@@ -2,10 +2,12 @@ import Elysia, { t } from "elysia";
 import jwt from "../../libs/jwt";
 import { GetUser } from "../../models/user/GetUser";
 import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
+import { ip } from "elysia-ip";
 
 export default class GetUserController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -23,12 +25,12 @@ export default class GetUserController {
       })
       .get(
         "/user/:id",
-        async ({ query: { companyId, depth }, params: { id }, set, tokenPayload }) => {
+        async ({ ip, query: { companyId, depth }, params: { id }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-            return await GetUser({ tokenPayload, id, companyId, depth });
+            return await GetUser({ tokenPayload, ip, id, companyId, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;

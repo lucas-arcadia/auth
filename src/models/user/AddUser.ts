@@ -1,3 +1,4 @@
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 import { IAddUser, IUser } from "./UserInterface";
@@ -24,7 +25,7 @@ export async function AddUser(input: IAddUser): Promise<IUser> {
 
     const hash = btoa(await Bun.password.hash(input.password));
 
-    return await prisma.user.create({
+    const result = await prisma.user.create({
       data: {
         name: input.name,
         email: input.email,
@@ -49,7 +50,33 @@ export async function AddUser(input: IAddUser): Promise<IUser> {
         updatedAt: true,
       },
     });
+
+    new AuditTrail(
+      "AddUser",
+      "User",
+      result.id,
+      input.tokenPayload.u,
+      JSON.stringify({
+        name: result.name,
+        email: result.email,
+        phone: result.phone,
+        companyId: result.companyId,
+        ruleId: result.ruleId,
+      }),
+      input.ip,
+    );
+
+    return result;
   } catch (error) {
+    new AuditTrail(
+      "AddUser",
+      "User",
+      `error: ${error}`,
+      input.tokenPayload.u,
+      JSON.stringify(error),
+      input.ip,
+    );
+    
     throw error;
   }
 }

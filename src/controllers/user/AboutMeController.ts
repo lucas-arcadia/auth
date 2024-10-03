@@ -1,10 +1,13 @@
 import Elysia, { t } from "elysia";
+import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { AboutMe } from "../../models/user/AboutMe";
+import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
 
 export default class AboutMeController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -21,12 +24,12 @@ export default class AboutMeController {
 
       .get(
         "/user/aboutme",
-        async ({ query: { companyId, depth }, set, tokenPayload }) => {
+        async ({ ip, query: { companyId, depth }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-            return await AboutMe({ tokenPayload, companyId, depth });
+            return await AboutMe({ tokenPayload, ip, companyId, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -42,22 +45,19 @@ export default class AboutMeController {
           type: "application/json",
 
           detail: {
-            tags: ["Usuários"],
-            summary: "Sobre mim",
-            description: "Obtém as informações do seu usuário.",
+            tags: ["Users"],
+            summary: "About me",
+            description: "Get information about your user",
             operationId: "AboutMe",
           },
 
           headers: t.Object({
-            authorization: t.String({
-              description: "Token authorization",
-              error: JSON.stringify({ message: "Token is required" }),
-            }),
+            authorization: ElysiaHeader.authorization,
           }),
 
           query: t.Object({
-            companyId: t.Optional(t.String({ description: "Company Id" })),
-            depth: t.Optional(t.String({ description: "If present, search for related subdocuments" })),
+            companyId: ElysiaQuery.companyId,
+            depth: ElysiaQuery.depth,
           }),
 
           response: {
@@ -74,11 +74,11 @@ export default class AboutMeController {
               updatedAt: t.Date(),
               Company: t.Optional(t.Any()),
               Rule: t.Optional(t.Any()),
-            }),
-            401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
-            403: t.Object({ message: t.String() }, { description: "Forbidden" }),
-            404: t.Object({ message: t.String() }, { description: "Not found" }),
-            500: t.Object({ message: t.String() }, { description: "Server error" }),
+            }, { description: "Success" }),
+            401: ElysiaResponse[401],
+            403: ElysiaResponse[403],
+            404: ElysiaResponse[404],
+            500: ElysiaResponse[500],
           },
         }
       );
