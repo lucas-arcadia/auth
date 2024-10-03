@@ -7,13 +7,26 @@ export async function ListUser(input: IListUserQuery): Promise<IListUser> {
     const permission = await checkPermission({
       tokenPayload: input.tokenPayload,
       service: Services.Company,
-      action: Actions.ListUser,
+      action: Actions.ListUsers,
       prisma,
     });
 
     let companyId = input.tokenPayload.c;
+    let whereClause: any = {};
+
     if (input.companyId) {
-      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId
+      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
+        if (input.companyId === "all") {
+           // If companyId is "all", we do not include the companyId condition in the where
+        } else {
+          companyId = input.companyId;
+          whereClause.companyId = companyId;
+        }
+      } else {
+        whereClause.companyId = companyId;
+      }
+    } else {
+      whereClause.companyId = companyId;
     }
 
     let limit = Math.round(Number(input.limit)) || 10;
@@ -29,9 +42,7 @@ export async function ListUser(input: IListUserQuery): Promise<IListUser> {
     const users = await prisma.user.findMany({
       skip,
       take: limit,
-      where: {
-        companyId: companyId,
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,

@@ -1,6 +1,5 @@
 import Elysia, { t } from "elysia";
 import { Login } from "../../models/user/Login";
-import { ILoginBody } from "../../models/user/UserInterface";
 
 export default class LoginController {
   constructor(readonly server: Elysia) {
@@ -8,7 +7,6 @@ export default class LoginController {
       "/user/login",
       async ({ body: { email, password}, set }) => {
         try {
-          // const { email, password } = body as ILoginBody;
           const result = await Login({ email, password });
 
           set.headers["Authorization"] = `Bearer ${result.token}`;
@@ -30,9 +28,9 @@ export default class LoginController {
         type: "application/json",
 
         detail: {
-          tags: ["Usuários"],
-          description: "Faz o login do usuário",
-          operationId: "LoginUsuario",
+          tags: ["Users"],
+          description: "Login user",
+          operationId: "LoginUser",
           summary: "Login",
         },
 
@@ -42,9 +40,9 @@ export default class LoginController {
         }),
 
         response: {
-          200: t.Object({ token: t.String() }),
+          200: t.Object({ token: t.String() }, { description: "Success" }),
           401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
-          500: t.Object({ message: t.String() }, { description: "Server error" }),
+          500: t.Object({ message: t.String() }, { description: "Server Error" }),
         },
       }
     );

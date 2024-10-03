@@ -44,9 +44,9 @@ export default class GetUserController {
           type: "application/json",
 
           detail: {
-            tags: ["Usuários"],
-            summary: "Obter usuário",
-            description: "Obtém os dados de um usuário",
+            tags: ["Users"],
+            summary: "Get user",
+            description: "Get user data",
             operationId: "GetUser",
           },
 
@@ -60,7 +60,7 @@ export default class GetUserController {
           }),
 
           params: t.Object({
-            id: t.String({ description: "ID do usuário" }),
+            id: t.String({ description: "User ID", error: JSON.stringify({ message: "The user ID is required" }) }),
           }),
 
           response: {
@@ -77,7 +77,7 @@ export default class GetUserController {
               updatedAt: t.Date(),
               Company: t.Optional(t.Any()),
               Rule: t.Optional(t.Any()),
-            }),
+            }, { description: "Success" }),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

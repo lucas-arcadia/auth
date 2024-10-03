@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
-import jwt from "../../libs/jwt";
 import dateUtil from "../../libs/dateUtil";
+import jwt from "../../libs/jwt";
 import { prisma } from "../db";
 
 export interface ILogin {
@@ -14,7 +14,7 @@ export interface IToken {
 
 export async function Login(input: ILogin): Promise<IToken> {
   try {
-    // Procura o usuário
+    // Search for the user
     const user = await prisma.user.findUnique({
       where: {
         email: input.email,
@@ -23,7 +23,7 @@ export async function Login(input: ILogin): Promise<IToken> {
     });
     if (!user) throw new Error("Unauthorized");
 
-    // Procura a empresa
+    // Search for the company
     const company = await prisma.company.findUnique({
       where: {
         id: user.companyId,
@@ -32,7 +32,7 @@ export async function Login(input: ILogin): Promise<IToken> {
     });
     if (!company) throw new Error("Unauthorized");
 
-    // Procura pelas tentativas de login
+    // Search for login attempts
     if (user.attempts >= 6) {
       const dateDiff = dateUtil.minutesDiff(new Date(), user.updatedAt);
       if (dateDiff < 10) {
@@ -56,7 +56,7 @@ export async function Login(input: ILogin): Promise<IToken> {
       }
     }
 
-    // Verifica a senha
+    // Verify the password
     if (!(await Bun.password.verify(input.password, atob(user.hash)))) {
       await prisma.user.update({
         data: {
@@ -125,17 +125,13 @@ export async function Login(input: ILogin): Promise<IToken> {
     });
 
     await prisma.user.update({
-      data: {
-        attempts: 0,
-      },
-      where: {
-        id: user.id,
-      },
+      data: { attempts: 0 },
+      where: { id: user.id },
     });
 
     return { token };
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw error;
   }
 }

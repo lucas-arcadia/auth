@@ -12,16 +12,27 @@ export async function GetUser(input: IGetUser): Promise<IUser> {
     });
 
     let companyId = input.tokenPayload.c;
+    let whereClause: any = { id: input.id };
+
     if (input.companyId) {
-      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId;
+      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
+        if (input.companyId === "all") {
+          // If companyId is "all", we do not include the companyId condition in the where
+        } else {
+          companyId = input.companyId;
+          whereClause.companyId = companyId;
+        }
+      } else {
+        whereClause.companyId = companyId;
+      }
+    } else {
+      whereClause.companyId = companyId;
     }
 
+    whereClause.Company = { active: true };
+
     const user = await prisma.user.findUnique({
-      where: {
-        id: input.id,
-        companyId: companyId,
-        Company: { active: true },
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,

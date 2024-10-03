@@ -35,13 +35,13 @@ export enum Services {
 export enum Actions {
   AddCompany = "AddCompany",
   GetCompany = "GetCompany",
-  ListCompany = "ListCompany",
+  ListCompanies = "ListCompanies",
   UpdateCompany = "UpdateCompany",
   DeleteCompany = "DeleteCompany",
 
   AddService = "AddService",
   GetService = "GetService",
-  ListService = "ListService",
+  ListServices = "ListServices",
   UpdateService = "UpdateService",
   DeleteService = "DeleteService",
 
@@ -53,19 +53,19 @@ export enum Actions {
 
   AddUser = "AddUser",
   GetUser = "GetUser",
-  ListUser = "ListUser",
+  ListUsers = "ListUsers",
   UpdateUser = "UpdateUser",
   DeleteUser = "DeleteUser",
 
-  AddPolice = "AddPolice",
-  GetPolice = "GetPolice",
-  ListPolice = "ListPolice",
-  UpdatePolice = "UpdatePolice",
-  DeletePolice = "DeletePolice",
+  AddPolicy = "AddPolicy",
+  GetPolicy = "GetPolicy",
+  ListPolicies = "ListPolicies",
+  UpdatePolicy = "UpdatePolicy",
+  DeletePolicy = "DeletePolicy",
 
   AddRule = "AddRule",
   GetRule = "GetRule",
-  ListRule = "ListRule",
+  ListRules = "ListRules",
   UpdateRule = "UpdateRule",
   DeleteRule = "DeleteRule",
 
@@ -152,7 +152,7 @@ export async function checkPermission(input: ICheckPermission): Promise<ITokenIn
     });
     if (!rule) throw new Error("Forbidden. (RNF)");
 
-    const police = await input.prisma.police.findFirst({
+    const police = await input.prisma.policy.findFirst({
       where: {
         action: input.action,
         Service: {

@@ -11,15 +11,21 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
       prisma,
     });
 
-    let companyId = input.tokenPayload.c;
+    let companyId = input.tokenPayload.c || undefined;
     if (input.companyId) {
-      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId;
+      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
+        if (input.companyId === 'all') {
+          companyId = undefined;
+        } else {
+          companyId = input.companyId;
+        }
+      }
     }
 
     const user = await prisma.user.findUnique({
       where: {
         id: input.id,
-        companyId,
+        ...(companyId && { companyId }),
       },
     });
     if (!user) throw new Error("User not found");
@@ -36,7 +42,7 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
       return prisma.user.update({
         where: {
           id: input.id,
-          companyId,
+          ...(companyId && { companyId }),
         },
         data: {
           name: input.name || user.name,

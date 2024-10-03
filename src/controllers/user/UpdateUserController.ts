@@ -23,9 +23,10 @@ export default class UpdateUserController {
         }
       })
 
-      .patch(
+      .put(
         "/user/:id",
         async ({ body, params: { id }, set, tokenPayload }) => {
+          console.log(body, id)
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
@@ -46,10 +47,11 @@ export default class UpdateUserController {
         },
         {
           type: "application/json",
+
           detail: {
-            tags: ["Usuários"],
-            summary: "Atualizar usuário",
-            description: "Atualiza os dados de um usuário",
+            tags: ["Users"],
+            summary: "Update user",
+            description: "Update user data",
             operationId: "UpdateUser",
           },
 
@@ -58,7 +60,7 @@ export default class UpdateUserController {
           }),
 
           params: t.Object({
-            id: t.String({ description: "ID do usuário" }),
+            id: t.String({ description: "User ID", error: JSON.stringify({ message: "The user ID is required" }) }),
           }),
 
           body: t.Object({
@@ -81,7 +83,7 @@ export default class UpdateUserController {
               ruleId: t.String(),
               createdAt: t.Date(),
               updatedAt: t.Date(),
-            }),
+            }, { description: "Success" }),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

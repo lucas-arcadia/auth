@@ -45,9 +45,9 @@ export default class ListUserController {
           type: "application/json",
 
           detail: {
-            tags: ["Usuários"],
-            summary: "Listar usuários",
-            description: `Lista os usuários de uma empresa.`,
+            tags: ["Users"],
+            summary: "List users",
+            description: `List users of a company.`,
             operationId: "ListUser",
           },
 
@@ -81,7 +81,7 @@ export default class ListUserController {
                 })
               ),
               ...ElysiaPaginationReturn,
-            }),
+            }, { description: "Success" }),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],
