@@ -19,6 +19,7 @@ export interface ICompany {
 
 export interface IAddCompany {
   tokenPayload: ITokenPayload;
+  ip: string;
   company: {
     name: string;
     surname: string;
@@ -34,12 +35,14 @@ export interface IAddCompany {
 
 export interface IGetCompany {
   tokenPayload: ITokenPayload;
+  ip: string;
   companyId?: string;
   depth?: string;
 }
 
 export interface IListCompanyQuery {
   tokenPayload: ITokenPayload;
+  ip: string;
   depth?: string;
   limit?: string;
   page?: string;
@@ -61,6 +64,7 @@ export interface IListCompany {
 
 export interface IUpdateCompany {
   tokenPayload: ITokenPayload;
+  ip: string;
   companyId?: string;
   name?: string;
   surname?: string;

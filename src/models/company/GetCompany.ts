@@ -1,3 +1,4 @@
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 import { ICompany, IGetCompany } from "./CompanyInterfaces";
@@ -53,6 +54,15 @@ export async function GetCompany(input: IGetCompany): Promise<ICompany> {
 
     return result;
   } catch (error) {
+    new AuditTrail(
+      "GetCompany",
+      "Company",
+      `error: ${error}`,
+      input.tokenPayload.u,
+      JSON.stringify(error),
+      input.ip,
+    );
+
     throw error;
   }
 }

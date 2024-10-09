@@ -1,7 +1,7 @@
 import Elysia, { t } from "elysia";
 import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
-import { ListUser } from "../../models/user/ListUser";
+import { ListUsers } from "../../models/user/ListUser";
 import { ElysiaHeader, ElysiaPaginationReturn, ElysiaQuery, ElysiaResponse } from "../common/common";
 
 export default class ListUserController {
@@ -31,7 +31,7 @@ export default class ListUserController {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-            return await ListUser({ tokenPayload, ip, companyId, depth, limit, page });
+            return await ListUsers({ tokenPayload, ip, companyId, depth, limit, page });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;

@@ -1,4 +1,5 @@
 import Elysia, { t } from "elysia";
+import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { AddCompany } from "../../models/company/AddCompany";
 import { IAddCompany } from "../../models/company/CompanyInterfaces";
@@ -7,6 +8,7 @@ import { ElysiaHeader, ElysiaResponse } from "../common/common";
 export default class AddCompanyController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -23,14 +25,14 @@ export default class AddCompanyController {
 
       .post(
         "/company",
-        async ({ body, set, tokenPayload }) => {
+        async ({ body, ip, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             const { company, user } = body as IAddCompany;
 
             set.status = 201;
-            return await AddCompany({ tokenPayload, company, user });
+            return await AddCompany({ tokenPayload, ip, company, user });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -47,9 +49,9 @@ export default class AddCompanyController {
           type: "application/json",
 
           detail: {
-            tags: ["Empresas"],
-            summary: "Adicionar",
-            description: "Adiciona uma nova empresa no sistema.",
+            tags: ["Companies"],
+            summary: "Add Company",
+            description: "Add a new company to the system.",
             operationId: "AddCompany",
           },
 
@@ -59,9 +61,9 @@ export default class AddCompanyController {
 
           body: t.Object({
             company: t.Object({
-              name: t.String({ minLength: 8, error: "name: (Razão Social) Minimum 8 characters" }),
-              surname: t.String({ minLength: 2, error: "surname: (Nome fantasia) Minimum 2 characters" }),
-              ein: t.String({ minLength: 14, maxLength: 14, error: "ein: (CNPJ) Minimum and maximum of 14 numbers" }),
+              name: t.String({ minLength: 8, error: "name: (Company Legal Name) Minimum 8 characters" }),
+              surname: t.String({ minLength: 2, error: "surname: (Company Trade Name) Minimum 2 characters" }),
+              ein: t.String({ minLength: 14, maxLength: 14, error: "ein: (CNPJ/EIN) Minimum and maximum of 14 numbers" }),
             }),
             user: t.Object({
               name: t.String({ minLength: 8, error: "user name: Minimum 8 characters" }),
@@ -86,7 +88,7 @@ export default class AddCompanyController {
               imutable: t.Optional(t.Boolean()),
               createdAt: t.Optional(t.Date()),
               updatedAt: t.Optional(t.Date()),
-            }),
+            }, { description: "Success" }),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

@@ -1,3 +1,4 @@
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 import { AddUser } from "../user/AddUser";
@@ -36,6 +37,7 @@ export async function AddCompany(input: IAddCompany): Promise<ICompany> {
 
     await AddUser({
       tokenPayload: input.tokenPayload,
+      ip: input.ip,
       name: input.user.name,
       email: input.user.email,
       phone: input.user.phone,
@@ -46,6 +48,14 @@ export async function AddCompany(input: IAddCompany): Promise<ICompany> {
 
     return company;
   } catch (error) {
+    new AuditTrail(
+      "AddCompany",
+      "Company",
+      `error: ${error}`,
+      input.tokenPayload.u,
+      JSON.stringify(error),
+      input.ip,
+    );
     throw error;
   }
 }

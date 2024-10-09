@@ -63,6 +63,7 @@ export interface IListUser {
 
 export interface IUpdateUser {
   tokenPayload: ITokenPayload;
+  ip: string;
   id: string;
   companyId?: string;
   name?: string;
@@ -73,12 +74,15 @@ export interface IUpdateUser {
 }
 
 export interface IUserPermissionQuery {
+  tokenPayload: ITokenPayload;
+  ip: string;
   service: Services;
   action: Actions;
 }
 
 export interface IChangePassword {
   tokenPayload: ITokenPayload;
+  ip: string;
   id: string;
   oldPassword: string;
   newPassword: string;

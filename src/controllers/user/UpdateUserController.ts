@@ -1,4 +1,5 @@
 import Elysia, { t } from "elysia";
+import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { UpdateUser } from "../../models/user/UpdateUser";
 import { IUpdateUser } from "../../models/user/UserInterface";
@@ -7,6 +8,7 @@ import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
 export default class UpdateUserController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -25,15 +27,14 @@ export default class UpdateUserController {
 
       .patch(
         "/user/:id",
-        async ({ body, query: { companyId }, params: { id }, set, tokenPayload }) => {
-          console.log(body, id);
+        async ({ body, ip, query: { companyId }, params: { id }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             const { companyId, name, phone, active, attempts, ruleId } = body as IUpdateUser;
 
             set.status = 200;
-            return await UpdateUser({ tokenPayload, id, companyId, name, phone, active, attempts, ruleId });
+            return await UpdateUser({ tokenPayload, ip, id, companyId, name, phone, active, attempts, ruleId });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;

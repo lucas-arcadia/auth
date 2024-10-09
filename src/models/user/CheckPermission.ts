@@ -20,15 +20,8 @@ export async function CheckPermission(tokenPayload: ITokenPayload, ip: string, s
       else return false;
     } else return false;
   } catch (error) {
-    new AuditTrail(
-      "CheckPermission",
-      "User",
-      `error: ${error}`,
-      tokenPayload.u,
-      JSON.stringify(error),
-      ip,
-    );
-    
+    new AuditTrail("CheckPermission", "User", `error: ${error}`, tokenPayload.u, JSON.stringify(error), ip);
+
     throw error;
   }
 }

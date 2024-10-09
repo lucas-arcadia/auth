@@ -44,55 +44,54 @@ export async function GetUser(input: IGetUser): Promise<IUser> {
         ruleId: true,
         createdAt: true,
         updatedAt: true,
-        Company: input.depth !== undefined ? {
-          select: {
-            name: true,
-            surname: true,
-            ein: true,
-            active: true,
-          },
-        } : false,
-        Rule: input.depth !== undefined ? {
-          select: {
-            name: true,
-            description: true,
-            Policy: {
-              select: {
-                id: true,
-                description: true,
-                action: true,
-              },
-              where: {
-                active: true
-              },
-              orderBy: [
-                {
-                  Service: {
-                    name: "asc"
-                  }
+        Company:
+          input.depth !== undefined
+            ? {
+                select: {
+                  name: true,
+                  surname: true,
+                  ein: true,
+                  active: true,
                 },
-                {
-                  action: "asc"
-                }
-              ]
-            }
-          },
-        } : false,
+              }
+            : false,
+        Rule:
+          input.depth !== undefined
+            ? {
+                select: {
+                  name: true,
+                  description: true,
+                  Policy: {
+                    select: {
+                      id: true,
+                      description: true,
+                      action: true,
+                    },
+                    where: {
+                      active: true,
+                    },
+                    orderBy: [
+                      {
+                        Service: {
+                          name: "asc",
+                        },
+                      },
+                      {
+                        action: "asc",
+                      },
+                    ],
+                  },
+                },
+              }
+            : false,
       },
     });
     if (!user) throw new Error("User not found");
 
     return user;
   } catch (error) {
-    new AuditTrail(
-      "AddUser",
-      "User",
-      `error: ${error}`,
-      input.tokenPayload.u,
-      JSON.stringify(error),
-      input.ip,
-    );
-    
+    new AuditTrail("AddUser", "User", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
+
     throw error;
   }
 }

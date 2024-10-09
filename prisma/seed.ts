@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import * as crypto from "crypto";
 const prisma = new PrismaClient();
 
 try {
@@ -438,7 +439,7 @@ try {
       action: "GetFile",
       imutable: true,
     },
-  }); 
+  });
 
   const policyGetFolder = await prisma.policy.create({
     data: {
@@ -456,7 +457,7 @@ try {
       action: "ListFiles",
       imutable: true,
     },
-  }); 
+  });
 
   const policyListFolders = await prisma.policy.create({
     data: {
@@ -474,7 +475,7 @@ try {
       action: "UpdateFile",
       imutable: true,
     },
-  }); 
+  });
 
   const policyUpdateFolder = await prisma.policy.create({
     data: {
@@ -492,7 +493,7 @@ try {
       action: "DeleteFile",
       imutable: true,
     },
-  }); 
+  });
 
   const policyDeleteFolder = await prisma.policy.create({
     data: {
@@ -519,7 +520,7 @@ try {
       action: "ListFileVersions",
       imutable: true,
     },
-  }); 
+  });
 
   const policyDeleteFileVersion = await prisma.policy.create({
     data: {
@@ -674,7 +675,7 @@ try {
   /* Users
   /* ************************************************************************ */
   // General Administrators
-  await prisma.user.create({
+  const irapuanUser = await prisma.user.create({
     data: {
       name: "Irapuan Menezes",
       email: "irapuan.menezes@csitech.com.br",
@@ -721,6 +722,49 @@ try {
       companyId: rbmCompany.id,
       ruleId: managerRules.id,
       imutable: false,
+    },
+  });
+
+  /* ************************************************************************ */
+  /* Audit Trails
+  /* ************************************************************************ */
+  const previousHash = crypto.createHash("sha256");
+  previousHash.update(JSON.stringify({
+    action: "Seed Book",
+    entity: "AuditTrail Book",
+    entityId: "1",
+    userId: irapuanUser.id,
+    what: "The book of Genesis is the first book in the Bible.",
+    ip: "::ffff:127.0.0.1",
+    previousHash: "",
+    currentHash: "",
+  }));
+  const previousHashDigest = previousHash.digest("hex");
+
+  const currentHash = crypto.createHash("sha256");
+  currentHash.update(
+    JSON.stringify({
+      action: "Seed Kings",
+      entity: "AuditTrail Kings",
+      entityId: "2",
+      userId: irapuanUser.id,
+      what: "David and Solomon were kings of Israel.",
+      ip: "::ffff:127.0.0.1",
+      previousHash: previousHashDigest,
+    })
+  );
+  const currentHashDigest = currentHash.digest("hex");
+
+  await prisma.auditTrail.create({
+    data: {
+      action: "Seed",
+      entity: "AuditTrail",
+      entityId: "1",
+      userId: irapuanUser.id,
+      what: "AuditTrail seed",
+      ip: "::ffff:127.0.0.1",
+      previousHash: previousHashDigest,
+      currentHash: currentHashDigest,
     },
   });
 } catch (error) {

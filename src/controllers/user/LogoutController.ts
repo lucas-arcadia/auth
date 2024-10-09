@@ -2,10 +2,12 @@ import Elysia, { t } from "elysia";
 import jwt from "../../libs/jwt";
 import { Logout } from "../../models/user/Logout";
 import { ElysiaHeader } from "../common/common";
+import { ip } from "elysia-ip";
 
 export default class LogoutController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -22,11 +24,11 @@ export default class LogoutController {
 
       .get(
         "/user/logout",
-        async ({ set, tokenPayload }) => {
+        async ({ ip, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
-            await Logout(tokenPayload);
+            await Logout({ tokenPayload, ip });
 
             set.status = 200;
             return {

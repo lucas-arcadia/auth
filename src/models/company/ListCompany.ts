@@ -1,13 +1,14 @@
-import { prisma } from "../db";
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
+import { prisma } from "../db";
 import { IListCompany, IListCompanyQuery } from "./CompanyInterfaces";
 
-export async function ListCompany(input: IListCompanyQuery): Promise<IListCompany> {
+export async function ListCompanies(input: IListCompanyQuery): Promise<IListCompany> {
   try {
     await checkPermission({
       tokenPayload: input.tokenPayload,
       service: Services.Company,
-      action: Actions.ListCompany,
+      action: Actions.ListCompanies,
       prisma,
     });
 
@@ -70,6 +71,15 @@ export async function ListCompany(input: IListCompanyQuery): Promise<IListCompan
       nextPage: page + 1 > totalPages ? null : page + 1,
     };
   } catch (error) {
+    new AuditTrail(
+      "ListCompany",
+      "Company",
+      `error: ${error}`,
+      input.tokenPayload.u,
+      JSON.stringify(error),
+      input.ip,
+    );
+
     throw error;
   }
 }

@@ -1,12 +1,18 @@
+import { AuditTrail } from "../../libs/audit";
 import { ITokenPayload } from "../../libs/jwt";
 import { prisma } from "../db";
 
-export async function Logout(tokenPayload: ITokenPayload): Promise<any> {
+export interface ILogout {
+  tokenPayload: ITokenPayload;
+  ip: string;
+}
+
+export async function Logout(input: ILogout): Promise<any> {
   try {
     // Procura o usuário
     const user = await prisma.user.findUnique({
       where: {
-        id: tokenPayload.u,
+        id: input.tokenPayload.u,
         active: true,
       },
     });
@@ -35,17 +41,17 @@ export async function Logout(tokenPayload: ITokenPayload): Promise<any> {
     if (lastLogin) {
       await prisma.userLogins.update({
         data: {
-          action: "Logout"
+          action: "Logout",
         },
         where: {
-          id: lastLogin.id
-        }
-      })
+          id: lastLogin.id,
+        },
+      });
     } else {
       throw new Error("Unauthorized");
     }
-    
   } catch (error) {
+    new AuditTrail("Logout", "User", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
     throw error;
   }
 }

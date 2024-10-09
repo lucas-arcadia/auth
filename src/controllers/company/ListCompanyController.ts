@@ -1,11 +1,13 @@
 import Elysia, { t } from "elysia";
+import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
-import { ListCompany } from "../../models/company/ListCompany";
+import { ListCompanies } from "../../models/company/ListCompany";
 import { ElysiaHeader, ElysiaPaginationReturn, ElysiaQuery, ElysiaResponse } from "../common/common";
 
 export default class ListCompanyController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -24,12 +26,12 @@ export default class ListCompanyController {
 
       .get(
         "/company/list",
-        async ({ query: { depth, limit, page }, set, tokenPayload }) => {
+        async ({ ip, query: { depth, limit, page }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-            return await ListCompany({ tokenPayload, depth, limit, page });
+            return await ListCompanies({ tokenPayload, ip, depth, limit, page });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -45,10 +47,10 @@ export default class ListCompanyController {
           type: "application/json",
 
           detail: {
-            tags: ["Empresas"],
-            summary: "Listar",
-            description: "Lista as empresas do sistema.",
-            operationId: "ListCompany",
+            tags: ["Companies"],
+            summary: "List Companies",
+            description: "List the companies in the system.",
+            operationId: "ListCompanies",
           },
 
           headers: t.Object({
@@ -78,7 +80,7 @@ export default class ListCompanyController {
                 })
               ),
               ...ElysiaPaginationReturn,
-            }),
+            }, { description: "Success" }),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

@@ -1,3 +1,4 @@
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 import { IUpdateUser, IUser } from "./UserInterface";
@@ -14,7 +15,7 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
     let companyId = input.tokenPayload.c || undefined;
     if (input.companyId) {
       if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
-        if (input.companyId === 'all') {
+        if (input.companyId === "all") {
           companyId = undefined; // Allow access to all users
         } else {
           companyId = input.companyId;
@@ -39,6 +40,8 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
     if (input.ruleId && input.ruleId !== user.ruleId) hasChange = true;
 
     if (hasChange) {
+      new AuditTrail("UpdateUser", "User", `User updated: ${user.name}`, input.tokenPayload.u, JSON.stringify({from: {name: user.name, phone: user.phone, active: user.active, attempts: user.attempts, ruleId: user.ruleId}, to: {name: input.name, phone: input.phone, active: input.active, attempts: input.attempts, ruleId: input.ruleId}}), input.ip);
+
       return prisma.user.update({
         where: {
           id: input.id,
@@ -68,6 +71,8 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
       return user;
     }
   } catch (error) {
+    new AuditTrail("UpdateUser", "User", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
+
     throw error;
   }
 }

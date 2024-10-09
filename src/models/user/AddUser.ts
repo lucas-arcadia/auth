@@ -20,7 +20,7 @@ export async function AddUser(input: IAddUser): Promise<IUser> {
 
     let companyId = input.tokenPayload.c;
     if (input.companyId) {
-      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId
+      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId;
     }
 
     const hash = btoa(await Bun.password.hash(input.password));
@@ -63,20 +63,13 @@ export async function AddUser(input: IAddUser): Promise<IUser> {
         companyId: result.companyId,
         ruleId: result.ruleId,
       }),
-      input.ip,
+      input.ip
     );
 
     return result;
   } catch (error) {
-    new AuditTrail(
-      "AddUser",
-      "User",
-      `error: ${error}`,
-      input.tokenPayload.u,
-      JSON.stringify(error),
-      input.ip,
-    );
-    
+    new AuditTrail("AddUser", "User", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
+
     throw error;
   }
 }

@@ -1,12 +1,13 @@
 import Elysia, { t } from "elysia";
+import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { GetCompany } from "../../models/company/GetCompany";
 import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
-import { prisma } from "../../models/db";
 
 export default class GetCompanyController {
   constructor(readonly server: Elysia) {
     server
+      .use(ip())
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -25,12 +26,12 @@ export default class GetCompanyController {
 
       .get(
         "/company",
-        async ({ query: { companyId, depth }, set, tokenPayload }) => {
+        async ({ ip, query: { companyId, depth }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-            return await GetCompany({ tokenPayload, companyId, depth });
+            return await GetCompany({ tokenPayload, ip, companyId, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -46,9 +47,9 @@ export default class GetCompanyController {
           type: "application/json",
 
           detail: {
-            tags: ["Empresas"],
-            summary: "Obter",
-            description: "Obtém os dados de uma empresa.",
+            tags: ["Companies"],
+            summary: "Get Company",
+            description: "Get the data of a company.",
             operationId: "GetCompany",
           },
 
@@ -73,7 +74,7 @@ export default class GetCompanyController {
               User: t.Optional(t.Any()),
               Contact: t.Optional(t.Any()),
               Service: t.Optional(t.Any()),
-            }),
+            }, { description: "Success" }),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],
