@@ -23,17 +23,21 @@ export default class UpdateUserController {
         }
       })
 
-      .put(
+      .patch(
         "/user/:id",
         async ({ body, query: { companyId }, params: { id }, set, tokenPayload }) => {
           console.log(body, id)
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
-            const { name, phone, active, attempts, ruleId } = body as IUpdateUser;
+            const { companyId, name, phone, active, attempts, ruleId } = body as IUpdateUser;
 
             set.status = 200;
+<<<<<<< Updated upstream
             return await UpdateUser({ tokenPayload, id, name, phone, active, attempts, ruleId, companyId });
+=======
+            return await UpdateUser({ tokenPayload, id, companyId, name, phone, active, attempts, ruleId });
+>>>>>>> Stashed changes
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -50,8 +54,8 @@ export default class UpdateUserController {
 
           detail: {
             tags: ["Users"],
-            summary: "Update user",
-            description: "Update user data",
+            summary: "Update User",
+            description: "If the companyId is provided, a user from another company can be updated as long as the requester is a member of the Administrator or Manager group.",
             operationId: "UpdateUser",
           },
 
@@ -68,6 +72,7 @@ export default class UpdateUserController {
           }),
 
           body: t.Object({
+            companyId: t.Optional(t.String()),
             name: t.Optional(t.String()),
             phone: t.Optional(t.String()),
             active: t.Optional(t.Boolean()),

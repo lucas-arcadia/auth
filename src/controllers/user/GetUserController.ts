@@ -66,20 +66,23 @@ export default class GetUserController {
           }),
 
           response: {
-            200: t.Object({
-              id: t.String(),
-              name: t.String(),
-              email: t.String(),
-              phone: t.String(),
-              attempts: t.Number(),
-              active: t.Boolean(),
-              companyId: t.String(),
-              ruleId: t.String(),
-              createdAt: t.Date(),
-              updatedAt: t.Date(),
-              Company: t.Optional(t.Any()),
-              Rule: t.Optional(t.Any()),
-            }, { description: "Success" }),
+            200: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                email: t.String(),
+                phone: t.String(),
+                attempts: t.Number(),
+                active: t.Boolean(),
+                companyId: t.String(),
+                ruleId: t.String(),
+                createdAt: t.Date(),
+                updatedAt: t.Date(),
+                Company: t.Optional(t.Any()),
+                Rule: t.Optional(t.Any()),
+              },
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

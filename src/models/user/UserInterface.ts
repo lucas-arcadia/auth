@@ -64,12 +64,12 @@ export interface IListUser {
 export interface IUpdateUser {
   tokenPayload: ITokenPayload;
   id: string;
+  companyId?: string;
   name?: string;
   phone?: string;
   active?: boolean;
   attempts?: number;
   ruleId?: string;
-  companyId?: string;
 }
 
 export interface IUserPermissionQuery {

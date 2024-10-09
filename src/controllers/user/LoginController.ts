@@ -5,9 +5,9 @@ export default class LoginController {
   constructor(readonly server: Elysia) {
     server.post(
       "/user/login",
-      async ({ body: { email, password}, set }) => {
+      async ({ body: { username, password}, set }) => {
         try {
-          const result = await Login({ email, password });
+          const result = await Login({ username, password });
 
           set.headers["Authorization"] = `Bearer ${result.token}`;
 
@@ -35,8 +35,8 @@ export default class LoginController {
         },
 
         body: t.Object({
-          email: t.String(),
-          password: t.String(),
+          username: t.String({ description: "Username", error: "Username is required" }),
+          password: t.String({ description: "Password", error: "Password is required" }),
         }),
 
         response: {

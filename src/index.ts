@@ -63,7 +63,8 @@ app.use(
 );
 app.use(
   cors({
-    allowedHeaders: ["Authorization"],
+    origin: "*",
+    allowedHeaders: ["Authorization", "Content-Type"],
   })
 );
 app.use(compression());

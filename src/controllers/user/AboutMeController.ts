@@ -24,12 +24,20 @@ export default class AboutMeController {
 
       .get(
         "/user/aboutme",
+<<<<<<< Updated upstream
         async ({ ip, query: { companyId, depth }, set, tokenPayload }) => {
+=======
+        async ({ query: { depth }, set, tokenPayload }) => {
+>>>>>>> Stashed changes
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
+<<<<<<< Updated upstream
             return await AboutMe({ tokenPayload, ip, companyId, depth });
+=======
+            return await AboutMe({ tokenPayload, depth });
+>>>>>>> Stashed changes
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -47,7 +55,11 @@ export default class AboutMeController {
           detail: {
             tags: ["Users"],
             summary: "About me",
+<<<<<<< Updated upstream
             description: "Get information about your user",
+=======
+            description: "Get your user information.",
+>>>>>>> Stashed changes
             operationId: "AboutMe",
           },
 
@@ -56,8 +68,12 @@ export default class AboutMeController {
           }),
 
           query: t.Object({
+<<<<<<< Updated upstream
             companyId: ElysiaQuery.companyId,
             depth: ElysiaQuery.depth,
+=======
+            depth: t.Optional(t.String({ description: "If present, search for related subdocuments" })),
+>>>>>>> Stashed changes
           }),
 
           response: {
@@ -75,10 +91,17 @@ export default class AboutMeController {
               Company: t.Optional(t.Any()),
               Rule: t.Optional(t.Any()),
             }, { description: "Success" }),
+<<<<<<< Updated upstream
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],
             500: ElysiaResponse[500],
+=======
+            401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
+            403: t.Object({ message: t.String() }, { description: "Forbidden" }),
+            404: t.Object({ message: t.String() }, { description: "Not found" }),
+            500: t.Object({ message: t.String() }, { description: "Server error" }),
+>>>>>>> Stashed changes
           },
         }
       );

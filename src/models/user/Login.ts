@@ -4,7 +4,7 @@ import jwt from "../../libs/jwt";
 import { prisma } from "../db";
 
 export interface ILogin {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -17,7 +17,7 @@ export async function Login(input: ILogin): Promise<IToken> {
     // Search for the user
     const user = await prisma.user.findUnique({
       where: {
-        email: input.email,
+        email: input.username,
         active: true,
       },
     });

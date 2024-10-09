@@ -12,22 +12,21 @@ export async function ListUser(input: IListUserQuery): Promise<IListUser> {
       prisma,
     });
 
-    let companyId = input.tokenPayload.c;
     let whereClause: any = {};
 
     if (input.companyId) {
       if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
         if (input.companyId === "all") {
-           // If companyId is "all", we do not include the companyId condition in the where
+          // If companyId is "all", we do not include the companyId condition in the where
+          whereClause.companyId = undefined;
         } else {
-          companyId = input.companyId;
-          whereClause.companyId = companyId;
+          whereClause.companyId = input.companyId;
         }
       } else {
-        whereClause.companyId = companyId;
+        whereClause.companyId = input.tokenPayload.c;
       }
     } else {
-      whereClause.companyId = companyId;
+      whereClause.companyId = input.tokenPayload.c;
     }
 
     let limit = Math.round(Number(input.limit)) || 10;
