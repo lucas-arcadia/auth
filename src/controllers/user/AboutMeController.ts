@@ -2,7 +2,7 @@ import Elysia, { t } from "elysia";
 import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { AboutMe } from "../../models/user/AboutMe";
-import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
+import { ElysiaHeader } from "../common/common";
 
 export default class AboutMeController {
   constructor(readonly server: Elysia) {
@@ -24,20 +24,12 @@ export default class AboutMeController {
 
       .get(
         "/user/aboutme",
-<<<<<<< Updated upstream
-        async ({ ip, query: { companyId, depth }, set, tokenPayload }) => {
-=======
-        async ({ query: { depth }, set, tokenPayload }) => {
->>>>>>> Stashed changes
+        async ({ ip, query: { depth }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-<<<<<<< Updated upstream
-            return await AboutMe({ tokenPayload, ip, companyId, depth });
-=======
-            return await AboutMe({ tokenPayload, depth });
->>>>>>> Stashed changes
+            return await AboutMe({ tokenPayload, ip, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -55,11 +47,7 @@ export default class AboutMeController {
           detail: {
             tags: ["Users"],
             summary: "About me",
-<<<<<<< Updated upstream
-            description: "Get information about your user",
-=======
             description: "Get your user information.",
->>>>>>> Stashed changes
             operationId: "AboutMe",
           },
 
@@ -68,40 +56,31 @@ export default class AboutMeController {
           }),
 
           query: t.Object({
-<<<<<<< Updated upstream
-            companyId: ElysiaQuery.companyId,
-            depth: ElysiaQuery.depth,
-=======
             depth: t.Optional(t.String({ description: "If present, search for related subdocuments" })),
->>>>>>> Stashed changes
           }),
 
           response: {
-            200: t.Object({
-              id: t.String(),
-              name: t.String(),
-              email: t.String(),
-              phone: t.String(),
-              attempts: t.Number(),
-              active: t.Boolean(),
-              companyId: t.String(),
-              ruleId: t.String(),
-              createdAt: t.Date(),
-              updatedAt: t.Date(),
-              Company: t.Optional(t.Any()),
-              Rule: t.Optional(t.Any()),
-            }, { description: "Success" }),
-<<<<<<< Updated upstream
-            401: ElysiaResponse[401],
-            403: ElysiaResponse[403],
-            404: ElysiaResponse[404],
-            500: ElysiaResponse[500],
-=======
+            200: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                email: t.String(),
+                phone: t.String(),
+                attempts: t.Number(),
+                active: t.Boolean(),
+                companyId: t.String(),
+                ruleId: t.String(),
+                createdAt: t.Date(),
+                updatedAt: t.Date(),
+                Company: t.Optional(t.Any()),
+                Rule: t.Optional(t.Any()),
+              },
+              { description: "Success" }
+            ),
             401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
             403: t.Object({ message: t.String() }, { description: "Forbidden" }),
             404: t.Object({ message: t.String() }, { description: "Not found" }),
             500: t.Object({ message: t.String() }, { description: "Server error" }),
->>>>>>> Stashed changes
           },
         }
       );

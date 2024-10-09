@@ -1,7 +1,7 @@
 import Elysia, { t } from "elysia";
 import jwt from "../../libs/jwt";
 import { Logout } from "../../models/user/Logout";
-import { ElysiaHeader, ElysiaResponse } from "../common/common";
+import { ElysiaHeader } from "../common/common";
 
 export default class LogoutController {
   constructor(readonly server: Elysia) {
@@ -58,15 +58,9 @@ export default class LogoutController {
 
           response: {
             200: t.Object({ message: t.String() }, { description: "Success" }),
-<<<<<<< Updated upstream
-            401: ElysiaResponse[401],
-            404: ElysiaResponse[404],
-            500: ElysiaResponse[500],
-=======
             401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
             404: t.Object({ message: t.String() }, { description: "User not found" }),
             500: t.Object({ message: t.String() }, { description: "Server error" }),
->>>>>>> Stashed changes
           },
         }
       );

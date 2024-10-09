@@ -49,11 +49,7 @@ export default class CheckPermissionController {
         {
           detail: {
             tags: ["Users"],
-<<<<<<< Updated upstream
             summary: "Check permission",
-=======
-            summary: "Check Permission",
->>>>>>> Stashed changes
             description: "Check if the user has permission or not based on the service and action.",
             operationId: "CheckPermission",
           },
@@ -63,13 +59,8 @@ export default class CheckPermissionController {
           }),
 
           params: t.Object({
-<<<<<<< Updated upstream
             service: t.String({ description: "Service name", error: JSON.stringify({ message: "Service name is required" }) }),
             action: t.String({ description: "Action name", error: JSON.stringify({ message: "Action name is required" }) }),
-=======
-            service: t.String({ description: "Service name" }),
-            action: t.String({ description: "Action name" }),
->>>>>>> Stashed changes
           }),
 
           response: {

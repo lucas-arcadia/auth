@@ -50,11 +50,7 @@ export default class AddUserController {
 
           detail: {
             tags: ["Users"],
-<<<<<<< Updated upstream
             summary: "Add user",
-=======
-            summary: "Add User",
->>>>>>> Stashed changes
             description: "Add a new user to a company in the system.",
             operationId: "AddUser",
           },

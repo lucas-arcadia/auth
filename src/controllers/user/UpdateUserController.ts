@@ -26,18 +26,14 @@ export default class UpdateUserController {
       .patch(
         "/user/:id",
         async ({ body, query: { companyId }, params: { id }, set, tokenPayload }) => {
-          console.log(body, id)
+          console.log(body, id);
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             const { companyId, name, phone, active, attempts, ruleId } = body as IUpdateUser;
 
             set.status = 200;
-<<<<<<< Updated upstream
-            return await UpdateUser({ tokenPayload, id, name, phone, active, attempts, ruleId, companyId });
-=======
             return await UpdateUser({ tokenPayload, id, companyId, name, phone, active, attempts, ruleId });
->>>>>>> Stashed changes
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -81,18 +77,21 @@ export default class UpdateUserController {
           }),
 
           response: {
-            200: t.Object({
-              id: t.String(),
-              name: t.String(),
-              email: t.String(),
-              phone: t.String(),
-              active: t.Boolean(),
-              attempts: t.Number(),
-              companyId: t.String(),
-              ruleId: t.String(),
-              createdAt: t.Date(),
-              updatedAt: t.Date(),
-            }, { description: "Success" }),
+            200: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                email: t.String(),
+                phone: t.String(),
+                active: t.Boolean(),
+                attempts: t.Number(),
+                companyId: t.String(),
+                ruleId: t.String(),
+                createdAt: t.Date(),
+                updatedAt: t.Date(),
+              },
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],
