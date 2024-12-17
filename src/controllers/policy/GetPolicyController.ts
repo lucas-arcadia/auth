@@ -1,9 +1,9 @@
 import Elysia, { t } from "elysia";
 import jwt from "../../libs/jwt";
-import { ListPolice } from "../../models/police/ListPolice";
-import { ElysiaHeader, ElysiaPaginationReturn, ElysiaQuery, ElysiaResponse } from "../common/common";
+import { GetPolicy } from "../../models/policy/GetPolicy";
+import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
 
-export default class ListPoliceController {
+export default class GetPolicyController {
   constructor(readonly server: Elysia) {
     server
       .derive(async ({ headers }) => {
@@ -21,15 +21,13 @@ export default class ListPoliceController {
           return { tokenPayload: null };
         }
       })
-
       .get(
-        "/police/list",
-        async ({ query: { depth, limit, page }, set, tokenPayload }) => {
+        "/policy/:id",
+        async ({ params: { id }, query: { depth }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
-            set.status = 200;
-            return await ListPolice({ tokenPayload, depth, limit, page });
+            return await GetPolicy({ tokenPayload, id, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -45,10 +43,10 @@ export default class ListPoliceController {
           type: "application/json",
 
           detail: {
-            tags: ["Políticas"],
-            summary: "Listar",
-            description: "Lista as políticas do sistema.",
-            operationId: "ListPolice",
+            tags: ["Policies"],
+            summary: "Get",
+            description: "Gets the data of a policy.",
+            operationId: "GetPolicy",
           },
 
           headers: t.Object({
@@ -56,35 +54,31 @@ export default class ListPoliceController {
           }),
 
           query: t.Object({
-            companyId: ElysiaQuery.companyId,
             depth: ElysiaQuery.depth,
-            limit: ElysiaQuery.limit,
-            page: ElysiaQuery.page,
+          }),
+          
+          params: t.Object({
+            id: t.String({ description: "ID da política" }),
           }),
 
           response: {
             200: t.Object({
-              docs: t.Array(
-                t.Object({
-                  id: t.String(),
-                  serviceId: t.String(),
-                  description: t.String(),
-                  action: t.String(),
-                  active: t.Boolean(),
-                  createdAt: t.Date(),
-                  updatedAt: t.Date(),
-                  Service: t.Optional(t.Any()),
-                  Rule: t.Optional(t.Any()),
-                })
-              ),
-              ...ElysiaPaginationReturn,
+              id: t.String(),
+              serviceId: t.String(),
+              description: t.String(),
+              action: t.String(),
+              active: t.Boolean(),
+              createdAt: t.Date(),
+              updatedAt: t.Date(),
+              Service: t.Optional(t.Any()),
+              Rule: t.Optional(t.Any())
             }),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],
             500: ElysiaResponse[500],
-          },
+          }
         }
-      );
+      )
   }
 }

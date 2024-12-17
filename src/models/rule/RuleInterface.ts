@@ -1,5 +1,5 @@
 import { ITokenPayload } from "../../libs/jwt";
-import { IPolice } from "../police/PoliceInterfaces";
+import { IPolice } from "../policy/PolicyInterfaces";
 import { IUser } from "../user/UserInterface";
 
 export interface IRule {

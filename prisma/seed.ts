@@ -30,6 +30,14 @@ try {
     },
   });
 
+  const CustodianService = await prisma.service.create({
+    data: {
+      name: "Custodian",
+      description: "Custodian Management Service",
+      imutable: true,
+    },
+  });
+
   /* ************************************************************************ */
   /* Company's policies
   /* ************************************************************************ */
@@ -45,7 +53,7 @@ try {
   const PolicyGetCompany = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Get a company's information",
+      description: "Get Company Information",
       action: "GetCompany",
       imutable: true,
     },
@@ -54,8 +62,8 @@ try {
   const PolicyListCompanies = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "List companies",
-      action: "ListCompanies",
+      description: "List Companies",
+      action: "ListCompany",
       imutable: true,
     },
   });
@@ -63,7 +71,7 @@ try {
   const PolicyUpdateCompany = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Update a company",
+      description: "Update Company Information",
       action: "UpdateCompany",
       imutable: true,
     },
@@ -72,17 +80,8 @@ try {
   const PolicyDeleteCompany = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Delete a Company",
+      description: "Delete Company Information",
       action: "DeleteCompany",
-      imutable: true,
-    },
-  });
-
-  const PolicyDeleteService = await prisma.policy.create({
-    data: {
-      serviceId: CompanyService.id,
-      description: "Delete a service",
-      action: "DeleteService",
       imutable: true,
     },
   });
@@ -102,7 +101,7 @@ try {
   const PolicyGetService = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Get a service's information",
+      description: "Get Service Information",
       action: "GetService",
       imutable: true,
     },
@@ -111,8 +110,8 @@ try {
   const PolicyListServices = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "List services",
-      action: "ListServices",
+      description: "List Services",
+      action: "ListService",
       imutable: true,
     },
   });
@@ -120,8 +119,17 @@ try {
   const PolicyUpdateService = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Update a service",
+      description: "Update Service Information",
       action: "UpdateService",
+      imutable: true,
+    },
+  });
+
+  const PolicyDeleteService = await prisma.policy.create({
+    data: {
+      serviceId: CompanyService.id,
+      description: "Delete Service Information",
+      action: "DeleteService",
       imutable: true,
     },
   });
@@ -132,7 +140,7 @@ try {
   const PolicyAddContact = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Add a new contact",
+      description: "Add Contact Information",
       action: "AddContact",
       imutable: true,
     },
@@ -141,7 +149,7 @@ try {
   const PolicyGetContact = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Get a contact's information",
+      description: "Get Contact Information",
       action: "GetContact",
       imutable: true,
     },
@@ -150,8 +158,8 @@ try {
   const PolicyListContacts = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "List contacts",
-      action: "ListContacts",
+      description: "List Contacts",
+      action: "ListContact",
       imutable: true,
     },
   });
@@ -159,7 +167,7 @@ try {
   const PolicyUpdateContact = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Update a contact",
+      description: "Update Contact Information",
       action: "UpdateContact",
       imutable: true,
     },
@@ -168,7 +176,7 @@ try {
   const PolicyDeleteContact = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Delete a contact",
+      description: "Delete Contact Information",
       action: "DeleteContact",
       imutable: true,
     },
@@ -180,7 +188,7 @@ try {
   const PolicyAddUser = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Add a new user",
+      description: "Add User Information",
       action: "AddUser",
       imutable: true,
     },
@@ -189,7 +197,7 @@ try {
   const PolicyGetUser = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Get a user's information",
+      description: "Get User Information",
       action: "GetUser",
       imutable: true,
     },
@@ -198,8 +206,8 @@ try {
   const PolicyListUsers = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "List users",
-      action: "ListUsers",
+      description: "List Users",
+      action: "ListUser",
       imutable: true,
     },
   });
@@ -207,7 +215,7 @@ try {
   const PolicyUpdateUser = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Update a user",
+      description: "Update User Information",
       action: "UpdateUser",
       imutable: true,
     },
@@ -216,7 +224,7 @@ try {
   const PolicyDeleteUser = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Delete a user",
+      description: "Delete User Information",
       action: "DeleteUser",
       imutable: true,
     },
@@ -234,7 +242,7 @@ try {
   const PolicyGetPermission = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Get a user's permissions",
+      description: "Get User Permissions",
       action: "GetPermission",
       imutable: true,
     },
@@ -243,7 +251,7 @@ try {
   const PolicySetPermission = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Set a user's permissions",
+      description: "Set User Permissions",
       action: "SetPermission",
       imutable: true,
     },
@@ -252,7 +260,7 @@ try {
   const PolicyPassword = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Set a user's password",
+      description: "Set User Password",
       action: "Password",
       imutable: true,
     },
@@ -264,7 +272,7 @@ try {
   const PolicyAddPolicy = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Add a new policy",
+      description: "Add Policy Information",
       action: "AddPolicy",
       imutable: true,
     },
@@ -273,7 +281,7 @@ try {
   const PolicyGetPolicy = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Get a policy's information",
+      description: "Get Policy Information",
       action: "GetPolicy",
       imutable: true,
     },
@@ -282,8 +290,8 @@ try {
   const PolicyListPolicies = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "List policies",
-      action: "ListPolicies",
+      description: "List Policies",
+      action: "ListPolicy",
       imutable: true,
     },
   });
@@ -291,7 +299,7 @@ try {
   const PolicyUpdatePolicy = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Update a policy",
+      description: "Update Policy Information",
       action: "UpdatePolicy",
       imutable: true,
     },
@@ -300,7 +308,7 @@ try {
   const PolicyDeletePolicy = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Delete a policy",
+      description: "Delete Policy Information",
       action: "DeletePolicy",
       imutable: true,
     },
@@ -312,7 +320,7 @@ try {
   const PolicyAddRule = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Add a new rule",
+      description: "Add Rule Information",
       action: "AddRule",
       imutable: true,
     },
@@ -321,7 +329,7 @@ try {
   const PolicyGetRule = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Get a rule's information",
+      description: "Get Rule Information",
       action: "GetRule",
       imutable: true,
     },
@@ -330,8 +338,8 @@ try {
   const PolicyListRules = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "List rules",
-      action: "ListRules",
+      description: "List Rules",
+      action: "ListRule",
       imutable: true,
     },
   });
@@ -339,7 +347,7 @@ try {
   const PolicyUpdateRule = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Update a rule",
+      description: "Update Rule Information",
       action: "UpdateRule",
       imutable: true,
     },
@@ -348,7 +356,7 @@ try {
   const PolicyDeleteRule = await prisma.policy.create({
     data: {
       serviceId: CompanyService.id,
-      description: "Delete a rule",
+      description: "Delete Rule Information",
       action: "DeleteRule",
       imutable: true,
     },
@@ -360,7 +368,7 @@ try {
   const policyAddManifestation = await prisma.policy.create({
     data: {
       serviceId: OmbudsmanService.id,
-      description: "Add a new manifestation",
+      description: "Add Manifestation Information",
       action: "AddManifestation",
       imutable: true,
     },
@@ -369,7 +377,7 @@ try {
   const policyGetManifestation = await prisma.policy.create({
     data: {
       serviceId: OmbudsmanService.id,
-      description: "Get a manifestation's information",
+      description: "Get Manifestation Information",
       action: "GetManifestation",
       imutable: true,
     },
@@ -378,7 +386,7 @@ try {
   const policyListManifestations = await prisma.policy.create({
     data: {
       serviceId: OmbudsmanService.id,
-      description: "List manifestations",
+      description: "List Manifestations",
       action: "ListManifestation",
       imutable: true,
     },
@@ -387,7 +395,7 @@ try {
   const policyUpdateManifestation = await prisma.policy.create({
     data: {
       serviceId: OmbudsmanService.id,
-      description: "Update a manifestation",
+      description: "Update Manifestation Information",
       action: "UpdateManifestation",
       imutable: true,
     },
@@ -396,7 +404,7 @@ try {
   const policyAddManifestationResponse = await prisma.policy.create({
     data: {
       serviceId: OmbudsmanService.id,
-      description: "Add a new response to manifestation",
+      description: "Add Manifestation Response Information",
       action: "AddManifestationResponse",
       imutable: true,
     },
@@ -405,7 +413,7 @@ try {
   const policyListManifestationResponses = await prisma.policy.create({
     data: {
       serviceId: OmbudsmanService.id,
-      description: "List responses of a manifestation",
+      description: "List Manifestation Responses",
       action: "ListManifestationResponses",
       imutable: true,
     },
@@ -417,7 +425,7 @@ try {
   const policyAddFile = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Add a new file",
+      description: "Add File Information",
       action: "AddFile",
       imutable: true,
     },
@@ -426,7 +434,7 @@ try {
   const policyAddFolder = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Add a new folder",
+      description: "Add Folder Information",
       action: "AddFolder",
       imutable: true,
     },
@@ -435,7 +443,7 @@ try {
   const policyGetFile = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Get a file's information",
+      description: "Get File Information",
       action: "GetFile",
       imutable: true,
     },
@@ -444,7 +452,7 @@ try {
   const policyGetFolder = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Get a folder's information",
+      description: "Get Folder Information",
       action: "GetFolder",
       imutable: true,
     },
@@ -453,8 +461,8 @@ try {
   const policyListFiles = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "List files",
-      action: "ListFiles",
+      description: "List Files",
+      action: "ListFile",
       imutable: true,
     },
   });
@@ -462,8 +470,8 @@ try {
   const policyListFolders = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "List folders",
-      action: "ListFolders",
+      description: "List Folders",
+      action: "ListFolder",
       imutable: true,
     },
   });
@@ -471,7 +479,7 @@ try {
   const policyUpdateFile = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Update a file",
+      description: "Update File Information",
       action: "UpdateFile",
       imutable: true,
     },
@@ -480,7 +488,7 @@ try {
   const policyUpdateFolder = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Update a folder",
+      description: "Update Folder Information",
       action: "UpdateFolder",
       imutable: true,
     },
@@ -489,7 +497,7 @@ try {
   const policyDeleteFile = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Delete a file",
+      description: "Delete File Information",
       action: "DeleteFile",
       imutable: true,
     },
@@ -498,7 +506,7 @@ try {
   const policyDeleteFolder = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Delete a folder",
+      description: "Delete Folder Information",
       action: "DeleteFolder",
       imutable: true,
     },
@@ -507,7 +515,7 @@ try {
   const policyGetFileVersion = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Get a file's version",
+      description: "Get File Version Information",
       action: "GetFileVersion",
       imutable: true,
     },
@@ -516,7 +524,7 @@ try {
   const policyListFileVersions = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "List a file's versions",
+      description: "List File Versions",
       action: "ListFileVersions",
       imutable: true,
     },
@@ -525,11 +533,88 @@ try {
   const policyDeleteFileVersion = await prisma.policy.create({
     data: {
       serviceId: FileService.id,
-      description: "Delete a file's version",
+      description: "Delete File Version Information",
       action: "DeleteFileVersion",
       imutable: true,
     },
   });
+
+  /* ************************************************************************ */
+  /* Custodian service policies
+  /* ************************************************************************ */
+  const policyCustodianReportAnnualTaxStatement = await prisma.policy.create({
+    data: {
+      serviceId: CustodianService.id,
+      description: "Report Annual Tax Statement",
+      action: "ReportAnnualTaxStatement",
+      imutable: true,
+    },
+  });
+
+  const policyCustodianReportBalance = await prisma.policy.create({
+    data: {
+      serviceId: CustodianService.id,
+      description: "Report Balance",
+      action: "ReportBalance",
+      imutable: true,
+    },
+  });
+
+  const policyCustodianWithdrawal = await prisma.policy.create({
+    data: {
+      serviceId: CustodianService.id,
+      description: "Withdrawal",
+      action: "Withdrawal",
+      imutable: true,
+    },
+  });
+
+  const policyCustodianDeposit = await prisma.policy.create({
+    data: {
+      serviceId: CustodianService.id,
+      description: "Deposit",
+      action: "Deposit",
+      imutable: true,
+    },
+  });
+
+  const policyCustodianTransfer = await prisma.policy.create({
+    data: {
+      serviceId: CustodianService.id,
+      description: "Transfer",
+      action: "Transfer",
+      imutable: true,
+    },
+  });
+
+  const policyCustodianAccountList = await prisma.policy.create({
+    data: {
+      serviceId: CustodianService.id,
+      description: "List Custodian Accounts",
+      action: "ListCustodianAccount",
+      imutable: true,
+    },
+  });
+
+  const policyCustodianProductList = await prisma.policy.create({
+    data: {
+      serviceId: CustodianService.id,
+      description: "List Custodian Products",
+      action: "ListCustodianProduct",
+      imutable: true,
+    },
+  });
+
+  const policyCustodianProductGet = await prisma.policy.create({
+    data: {
+      serviceId: CustodianService.id,
+      description: "Get Custodian Product",
+      action: "GetCustodianProduct",
+      imutable: true,
+    },
+  });
+
+
 
   /* ************************************************************************ */
   /* General admin rules
@@ -631,6 +716,78 @@ try {
     },
   });
 
+
+  /* ************************************************************************ */
+  /* Custodian manager rules
+  /* ************************************************************************ */
+  const custodianOperatorRules = await prisma.rule.create({
+    data: {
+      name: "CustodianOperator",
+      description: "Custodian Operator",
+      imutable: true,
+    },
+  });
+
+  await prisma.rule.update({
+    where: { id: custodianOperatorRules.id },
+    data: {
+      Policy: {
+        set: [policyCustodianProductList, policyCustodianProductGet, policyCustodianAccountList, PolicyAddUser, PolicyGetUser, PolicyListUsers, PolicyUpdateUser],
+      },
+    },
+  });
+
+  const custodianLiquidatorRules = await prisma.rule.create({
+    data: {
+      name: "CustodianLiquidator",
+      description: "Custodian Liquidator",
+      imutable: true,
+    },
+  });
+
+  await prisma.rule.update({
+    where: { id: custodianLiquidatorRules.id },
+    data: {
+      Policy: {
+        set: [policyCustodianReportAnnualTaxStatement, policyCustodianReportBalance, policyCustodianWithdrawal, policyCustodianDeposit, policyCustodianTransfer, policyCustodianProductList, policyCustodianProductGet, policyCustodianAccountList],
+      },
+    },
+  });
+
+  const custodianAuditorRules = await prisma.rule.create({
+    data: {
+      name: "CustodianAuditor",
+      description: "Custodian Auditor",
+      imutable: true,
+    },
+  });
+
+  await prisma.rule.update({
+    where: { id: custodianAuditorRules.id },
+    data: {
+      Policy: {
+        set: [policyCustodianReportAnnualTaxStatement, policyCustodianReportBalance, policyCustodianAccountList],
+      },
+    },
+  });
+
+  const custodianCustomerRules = await prisma.rule.create({
+    data: {
+      name: "CustodianCustomer",
+      description: "Custodian Customer",
+      imutable: true,
+    },
+  });
+
+  await prisma.rule.update({
+    where: { id: custodianCustomerRules.id },
+    data: {
+      Policy: {
+        set: [policyCustodianReportAnnualTaxStatement, policyCustodianReportBalance, policyCustodianProductList, policyCustodianWithdrawal],
+      },
+    },
+  });
+
   /* ************************************************************************ */
   /* Comapnies
   /* ************************************************************************ */
@@ -723,6 +880,58 @@ try {
       ruleId: managerRules.id,
       imutable: false,
     },
+  });
+
+  // Custodian Operator
+  await prisma.user.create({
+    data: {
+      name: "Custodian Operator",
+      email: "operador.custodia@email.com",
+      phone: "+5511992000071",
+      hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
+      companyId: rbmCompany.id,
+      ruleId: custodianOperatorRules.id,
+      imutable: false,
+    }
+  });
+
+  // Custodian Liquidator
+  await prisma.user.create({
+    data: {
+      name: "Custodian Liquidator",
+      email: "liquidador.custodia@email.com",
+      phone: "+5511992000071",
+      hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
+      companyId: rbmCompany.id,
+      ruleId: custodianLiquidatorRules.id,
+      imutable: false,
+    }
+  });
+
+  // Custodian Auditor
+  await prisma.user.create({
+    data: {
+      name: "Custodian Auditor",
+      email: "auditor.custodia@email.com",
+      phone: "+5511992000071",
+      hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
+      companyId: rbmCompany.id,
+      ruleId: custodianAuditorRules.id,
+      imutable: false,
+    }
+  });
+
+  // Custodian Customer
+  await prisma.user.create({
+    data: {
+      name: "Custodian Customer",
+      email: "cliente.custodia@email.com",
+      phone: "+5511992000071",
+      hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
+      companyId: rbmCompany.id,
+      ruleId: custodianCustomerRules.id,
+      imutable: false,
+    }
   });
 
   /* ************************************************************************ */

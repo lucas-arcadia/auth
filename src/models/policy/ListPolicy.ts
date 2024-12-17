@@ -1,13 +1,13 @@
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
-import { IListPolice, IListPoliceQuery } from "./PoliceInterfaces";
+import { IListPolicy, IListPolicyQuery } from "./PolicyInterfaces";
 
-export async function ListPolice(input: IListPoliceQuery): Promise<IListPolice> {
+export async function ListPolicy(input: IListPolicyQuery): Promise<IListPolicy> {
   try {
     await checkPermission({
       tokenPayload: input.tokenPayload,
       service: Services.Company,
-      action: Actions.ListPolice,
+      action: Actions.ListPolicy,
       prisma,
     });
 
@@ -19,9 +19,9 @@ export async function ListPolice(input: IListPoliceQuery): Promise<IListPolice> 
 
     const skip = page === 1 ? 0 : page * limit - limit;
 
-    const totalPages = Math.ceil((await prisma.police.count()) / limit) || 0;
+    const totalPages = Math.ceil((await prisma.policy.count()) / limit) || 0;
 
-    const result = await prisma.police.findMany({
+    const result = await prisma.policy.findMany({
       skip,
       take: limit,
       select: {

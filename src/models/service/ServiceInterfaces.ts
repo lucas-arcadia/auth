@@ -1,6 +1,6 @@
 import { ITokenPayload } from "../../libs/jwt";
 import { ICompany } from "../company/CompanyInterfaces";
-import { IPolice } from "../police/PoliceInterfaces";
+import { IPolice } from "../policy/PolicyInterfaces";
 
 export interface IService {
   id: string;

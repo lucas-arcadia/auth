@@ -1,10 +1,10 @@
 import Elysia, { t } from "elysia";
 import jwt from "../../libs/jwt";
-import { UpdadePolice } from "../../models/police/UpdatePolice";
-import { IUpdatePolice } from "../../models/police/PoliceInterfaces";
+import { UpdadePolicy } from "../../models/policy/UpdatePolicy";
+import { IUpdatePolicy } from "../../models/policy/PolicyInterfaces";
 import { ElysiaHeader, ElysiaResponse } from "../common/common";
 
-export default class UpdatePoliceController {
+export default class UpdatePolicyController {
   constructor(readonly server: Elysia) {
     server
       .derive(async ({ headers }) => {
@@ -24,14 +24,14 @@ export default class UpdatePoliceController {
       })
 
       .patch(
-        "/police/:id",
+        "/policy/:id",
         async ({ body, params: { id }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
-            const { serviceId, description, action, active } = body as IUpdatePolice;
+            const { serviceId, description, action, active } = body as IUpdatePolicy;
 
-            return await UpdadePolice({ tokenPayload, serviceId, id, description, action, active });
+            return await UpdadePolicy({ tokenPayload, serviceId, id, description, action, active });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -47,10 +47,10 @@ export default class UpdatePoliceController {
           type: "application/json",
 
           detail: {
-            tags: ["Políticas"],
-            summary: "Atualizar",
-            description: "Atualiza os dados de uma política",
-            operationId: "UpdatePolice",
+            tags: ["Policies"],
+            summary: "Update",
+            description: "Updates the data of a policy.",
+            operationId: "UpdatePolicy",
           },
 
           headers: t.Object({

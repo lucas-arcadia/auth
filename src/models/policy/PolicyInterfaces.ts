@@ -2,7 +2,7 @@ import { ITokenPayload } from "../../libs/jwt";
 import { IRule } from "../rule/RuleInterface";
 import { IService } from "../service/ServiceInterfaces";
 
-export interface IPolice {
+export interface IPolicy {
   id: string;
   serviceId: string;
   description: string;
@@ -14,7 +14,7 @@ export interface IPolice {
   Rule?: IRule[];
 }
 
-export interface IAddPolice {
+export interface IAddPolicy {
   tokenPayload: ITokenPayload;
   serviceId: string;
   effect: string;
@@ -22,13 +22,13 @@ export interface IAddPolice {
   description: string;
 }
 
-export interface IGetPolice {
+export interface IGetPolicy {
   tokenPayload: ITokenPayload;
   id?: string;
   depth?: string;
 }
 
-export interface IListPoliceQuery {
+export interface IListPolicyQuery {
   tokenPayload: ITokenPayload;
   depth?: string;
   limit?: string;
@@ -37,8 +37,8 @@ export interface IListPoliceQuery {
   where?: string;
 }
 
-export interface IListPolice {
-  docs: IPolice[];
+export interface IListPolicy {
+  docs: IPolicy[];
   totalDocs: number;
   limit: number;
   totalPages: number;
@@ -49,7 +49,7 @@ export interface IListPolice {
   nextPage: number | null;
 }
 
-export interface IUpdatePolice {
+export interface IUpdatePolicy {
   tokenPayload: ITokenPayload;
   id: string;
   serviceId?: string;

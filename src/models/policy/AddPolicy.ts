@@ -1,22 +1,22 @@
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
-import { IAddPolice, IPolice } from "./PoliceInterfaces";
+import { IAddPolicy, IPolicy } from "./PolicyInterfaces";
 
-export async function AddPolice(input: IAddPolice): Promise<IPolice> {
+export async function AddPolicy(input: IAddPolicy): Promise<IPolicy> {
   try {
-    await checkPermission(input.tokenPayload, Services.Company, Actions.AddPolice, prisma);
+    await checkPermission(input.tokenPayload, Services.Company, Actions.AddPolicy, prisma);
 
-    const exists = await prisma.police.findUnique({
+    const exists = await prisma.policy.findUnique({
       where: {
-        uniquePolice: {
+        uniquePolicy: {
           serviceId: input.serviceId,
           action: input.action,
         }
       }
     });
-    if (exists) throw new Error("Police already exists");
+    if (exists) throw new Error("Policy already exists");
 
-    return await prisma.police.create({
+    return await prisma.policy.create({
       data: {
         serviceId: input.serviceId,
         action: input.action,

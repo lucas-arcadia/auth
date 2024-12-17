@@ -35,13 +35,13 @@ export enum Services {
 export enum Actions {
   AddCompany = "AddCompany",
   GetCompany = "GetCompany",
-  ListCompanies = "ListCompanies",
+  ListCompanies = "ListCompany",
   UpdateCompany = "UpdateCompany",
   DeleteCompany = "DeleteCompany",
 
   AddService = "AddService",
   GetService = "GetService",
-  ListServices = "ListServices",
+  ListServices = "ListService",
   UpdateService = "UpdateService",
   DeleteService = "DeleteService",
 
@@ -53,19 +53,19 @@ export enum Actions {
 
   AddUser = "AddUser",
   GetUser = "GetUser",
-  ListUsers = "ListUsers",
+  ListUsers = "ListUser",
   UpdateUser = "UpdateUser",
   DeleteUser = "DeleteUser",
 
   AddPolicy = "AddPolicy",
   GetPolicy = "GetPolicy",
-  ListPolicies = "ListPolicies",
+  ListPolicies = "ListPolicy",
   UpdatePolicy = "UpdatePolicy",
   DeletePolicy = "DeletePolicy",
 
   AddRule = "AddRule",
   GetRule = "GetRule",
-  ListRules = "ListRules",
+  ListRules = "ListRule",
   UpdateRule = "UpdateRule",
   DeleteRule = "DeleteRule",
 

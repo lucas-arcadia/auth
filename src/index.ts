@@ -17,10 +17,10 @@ import ListContactController from "./controllers/contact/ListContactController";
 import UpdadeContactController from "./controllers/contact/UpdateContactController";
 
 // Policies
-import AddPoliceController from "./controllers/police/AddPoliceController";
-import GetPoliceController from "./controllers/police/GetPoliceController";
-import ListPoliceController from "./controllers/police/ListPoliceController";
-import UpdatePoliceController from "./controllers/police/UpdatePoliceController";
+import AddPolicyController from "./controllers/policy/AddPolicyController";
+import GetPolicyController from "./controllers/policy/GetPolicyController";
+import ListPolicyController from "./controllers/policy/ListPolicyController";
+import UpdatePolicyController from "./controllers/policy/UpdatePolicyController";
 
 // Rules
 import AddRoleController from "./controllers/rule/AddRuleController";
@@ -84,10 +84,10 @@ new ListContactController(app);
 new UpdadeContactController(app);
 
 // Policies
-new AddPoliceController(app);
-new GetPoliceController(app);
-new ListPoliceController(app);
-new UpdatePoliceController(app);
+new AddPolicyController(app);
+new GetPolicyController(app);
+new ListPolicyController(app);
+new UpdatePolicyController(app);
 
 // Rules
 new AddRoleController(app);

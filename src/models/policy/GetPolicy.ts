@@ -1,17 +1,17 @@
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
-import { IGetPolice, IPolice } from "./PoliceInterfaces";
+import { IGetPolicy, IPolicy } from "./PolicyInterfaces";
 
-export async function GetPolice(input: IGetPolice): Promise<IPolice> {
+export async function GetPolicy(input: IGetPolicy): Promise<IPolicy> {
   try {
     const permission = await checkPermission({
       tokenPayload: input.tokenPayload,
       service: Services.Company,
-      action: Actions.GetPolice,
+      action: Actions.GetPolicy,
       prisma,
     });
 
-    const result = await prisma.police.findUnique({
+    const result = await prisma.policy.findUnique({
       where: {
         id: input.id
       },
@@ -28,7 +28,7 @@ export async function GetPolice(input: IGetPolice): Promise<IPolice> {
       }
       
     });
-    if (!result) throw new Error("Police does not found");
+    if (!result) throw new Error("Policy does not found");
 
     return result;
   } catch (error) {

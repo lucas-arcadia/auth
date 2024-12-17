@@ -1,5 +1,6 @@
 import Elysia, { t } from "elysia";
 import { Login } from "../../models/user/Login";
+import { ElysiaResponse } from "../common/common";
 
 export default class LoginController {
   constructor(readonly server: Elysia) {
@@ -41,8 +42,8 @@ export default class LoginController {
 
         response: {
           200: t.Object({ token: t.String() }, { description: "Success" }),
-          401: t.Object({ message: t.String() }, { description: "Unauthorized" }),
-          500: t.Object({ message: t.String() }, { description: "Server Error" }),
+          401: ElysiaResponse[401],
+          500: ElysiaResponse[500],
         },
       }
     );
