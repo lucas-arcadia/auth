@@ -5,10 +5,10 @@ import { ElysiaResponse } from "../common/common";
 export default class LoginController {
   constructor(readonly server: Elysia) {
     server
-      .derive(({ request }) => {
-        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip");
-        return { ip: clientIp };
-      })
+    .derive(({ request }) => {
+      const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+      return { ip: clientIp };
+    })
 
       .post(
         "/user/login",

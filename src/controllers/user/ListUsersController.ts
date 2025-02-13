@@ -7,10 +7,10 @@ export default class ListUserController {
   constructor(readonly server: Elysia) {
     server
       .derive(({ request }) => {
-        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip");
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
         return { ip: clientIp };
       })
-      
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -33,15 +33,7 @@ export default class ListUserController {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
-            set.status = 200;
-            set.headers["Content-Encoding"] = "gzip";
-            set.headers["Content-Type"] = "application/json";
-
-            const encoder = new TextEncoder();
-
-            const response = await ListUsers({ tokenPayload, ip: ip || "", companyId, depth, limit, page });
-            return  new Response(Bun.gzipSync(encoder.encode(JSON.stringify(response)))) ;
-            // return response;
+            return await ListUsers({ tokenPayload, ip, companyId, depth, limit, page });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -73,34 +65,34 @@ export default class ListUserController {
             page: ElysiaQuery.page,
           }),
 
-          // response: {
-          //   200: t.Object(
-          //     {
-          //       docs: t.Array(
-          //         t.Object({
-          //           id: t.String(),
-          //           name: t.String(),
-          //           email: t.String(),
-          //           phone: t.String(),
-          //           active: t.Boolean(),
-          //           attempts: t.Number(),
-          //           companyId: t.String(),
-          //           ruleId: t.String(),
-          //           createdAt: t.Date(),
-          //           updatedAt: t.Date(),
-          //           Company: t.Optional(t.Any()),
-          //           Role: t.Optional(t.Any()),
-          //         })
-          //       ),
-          //       ...ElysiaPaginationReturn,
-          //     },
-          //     { description: "Success" }
-          //   ),
-          //   401: ElysiaResponse[401],
-          //   403: ElysiaResponse[403],
-          //   404: ElysiaResponse[404],
-          //   500: ElysiaResponse[500],
-          // },
+          response: {
+            200: t.Object(
+              {
+                docs: t.Array(
+                  t.Object({
+                    id: t.String(),
+                    name: t.String(),
+                    email: t.String(),
+                    phone: t.String(),
+                    active: t.Boolean(),
+                    attempts: t.Number(),
+                    companyId: t.String(),
+                    ruleId: t.String(),
+                    createdAt: t.Date(),
+                    updatedAt: t.Date(),
+                    Company: t.Optional(t.Any()),
+                    Role: t.Optional(t.Any()),
+                  })
+                ),
+                ...ElysiaPaginationReturn,
+              },
+              { description: "Success" }
+            ),
+            401: ElysiaResponse[401],
+            403: ElysiaResponse[403],
+            404: ElysiaResponse[404],
+            500: ElysiaResponse[500],
+          },
         }
       );
   }

@@ -6,10 +6,10 @@ import { ElysiaHeader } from "../common/common";
 export default class LogoutController {
   constructor(readonly server: Elysia) {
     server
-      .derive(({ request }) => {
-        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip");
-        return { ip: clientIp };
-      })
+    .derive(({ request }) => {
+      const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+      return { ip: clientIp };
+    })
 
       .derive(async ({ headers }) => {
         try {
@@ -31,7 +31,7 @@ export default class LogoutController {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
 
-            await Logout({ tokenPayload, ip: ip || "" });
+            await Logout({ tokenPayload, ip});
 
             set.status = 200;
 

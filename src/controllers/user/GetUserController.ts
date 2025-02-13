@@ -2,12 +2,15 @@ import Elysia, { t } from "elysia";
 import jwt from "../../libs/jwt";
 import { GetUser } from "../../models/user/GetUser";
 import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
-import { ip } from "elysia-ip";
 
 export default class GetUserController {
   constructor(readonly server: Elysia) {
     server
-      .use(ip())
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -23,6 +26,7 @@ export default class GetUserController {
           return { tokenPayload: null };
         }
       })
+
       .get(
         "/user/:id",
         async ({ ip, query: { companyId, depth }, params: { id }, set, tokenPayload }) => {
@@ -43,8 +47,6 @@ export default class GetUserController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
             tags: ["Users"],
             summary: "Get user",

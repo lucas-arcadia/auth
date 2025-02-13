@@ -1,5 +1,4 @@
 import Elysia, { t } from "elysia";
-import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { AboutMe } from "../../models/user/AboutMe";
 import { ElysiaHeader } from "../common/common";
@@ -7,7 +6,11 @@ import { ElysiaHeader } from "../common/common";
 export default class AboutMeController {
   constructor(readonly server: Elysia) {
     server
-      .use(ip())
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -42,8 +45,6 @@ export default class AboutMeController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
             tags: ["Users"],
             summary: "About me",

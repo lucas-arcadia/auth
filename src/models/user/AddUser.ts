@@ -35,7 +35,7 @@ export async function AddUser(input: IAddUser): Promise<IUser> {
         active: true,
         companyId: companyId,
         ruleId: rule.id,
-        imutable: false,
+        readOnly: false,
       },
       select: {
         id: true,

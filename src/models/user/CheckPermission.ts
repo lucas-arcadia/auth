@@ -1,5 +1,5 @@
 import { AuditTrail } from "../../libs/audit";
-import jwt, { ITokenPayload } from "../../libs/jwt";
+import { ITokenPayload } from "../../libs/jwt";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 

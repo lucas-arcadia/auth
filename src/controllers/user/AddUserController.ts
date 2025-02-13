@@ -1,5 +1,4 @@
 import Elysia, { t } from "elysia";
-import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { AddUser } from "../../models/user/AddUser";
 import { IAddUser } from "../../models/user/UserInterface";
@@ -8,7 +7,11 @@ import { ElysiaHeader, ElysiaResponse } from "../common/common";
 export default class AddUserController {
   constructor(readonly server: Elysia) {
     server
-      .use(ip())
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+      
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -46,8 +49,6 @@ export default class AddUserController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
             tags: ["Users"],
             summary: "Add user",
@@ -69,20 +70,23 @@ export default class AddUserController {
           }),
 
           response: {
-            200: t.Object({
-              id: t.String(),
-              name: t.String(),
-              email: t.String(),
-              phone: t.String(),
-              attempts: t.Number(),
-              active: t.Boolean(),
-              companyId: t.String(),
-              ruleId: t.String(),
-              createdAt: t.Date(),
-              updatedAt: t.Date(),
-              Company: t.Optional(t.Any()),
-              Rule: t.Optional(t.Any()),
-            }, { description: "Success" }),
+            200: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                email: t.String(),
+                phone: t.String(),
+                attempts: t.Number(),
+                active: t.Boolean(),
+                companyId: t.String(),
+                ruleId: t.String(),
+                createdAt: t.Date(),
+                updatedAt: t.Date(),
+                Company: t.Optional(t.Any()),
+                Rule: t.Optional(t.Any()),
+              },
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],
