@@ -1,9 +1,10 @@
+import { Company } from "@prisma/client";
 import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
-import { ICompany, IUpdateCompany } from "./CompanyInterfaces";
+import { IUpdateCompany } from "./CompanyInterfaces";
 
-export async function UpdadeCompany(input: IUpdateCompany): Promise<ICompany> {
+export async function UpdadeCompany(input: IUpdateCompany): Promise<Company> {
   try {
     const permission = await checkPermission({
       tokenPayload: input.tokenPayload,
@@ -22,39 +23,28 @@ export async function UpdadeCompany(input: IUpdateCompany): Promise<ICompany> {
         id: companyId,
       },
     });
-    
+
     if (!company) throw new Error("Company not found");
-    if (!company.active) throw new Error("Company not found. Inactive");
-    if (company.imutable) throw new Error("Forbidden. Imutable");
+    if (company.readOnly) throw new Error("Forbidden. Read Only");
 
     let hasChange = false;
-
-    if (input.name && input.name !== company.name) hasChange = true;
-    if (input.surname && input.surname !== company.surname) hasChange = true;
+    if (input.name !== undefined && input.name !== company.name) hasChange = true;
+    if (input.surname !== undefined && input.surname !== company.surname) hasChange = true;
+    if (input.active !== undefined && input.active !== company.active) hasChange = true;
 
     if (hasChange) {
-      new AuditTrail("UpdateCompany", "Company", companyId, input.tokenPayload.u, JSON.stringify({ from: {name: company.name, surname: company.surname }, to: {name: input.name, surname: input.surname}}), input.ip);
+      new AuditTrail("UpdateCompany", "Company", companyId, input.tokenPayload.u, JSON.stringify({ from: { name: company.name, surname: company.surname }, to: { name: input.name, surname: input.surname } }), input.ip);
 
       return await prisma.company.update({
         where: { id: companyId },
         data: {
-          name: input.name || company.name,
-          surname: input.surname || company.surname,
-        },
-        select: {
-          id: true,
-          name: true,
-          surname: true,
-          ein: true,
+          name: input.name !== undefined ? input.name : company.name,
+          surname: input.surname !== undefined ? input.surname : company.surname,
+          active: input.active !== undefined ? input.active : company.active,
         },
       });
     } else {
-      return {
-        id: company.id,
-        name: company.name,
-        surname: company.surname,
-        ein: company.ein,
-      };
+      return company;
     }
   } catch (error) {
     new AuditTrail("UpdateCompany", "Company", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);

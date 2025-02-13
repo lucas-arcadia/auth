@@ -1,5 +1,4 @@
 import Elysia, { t } from "elysia";
-import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { IUpdateCompany } from "../../models/company/CompanyInterfaces";
 import { UpdadeCompany } from "../../models/company/UpdateCompany";
@@ -8,7 +7,11 @@ import { ElysiaHeader, ElysiaResponse } from "../common/common";
 export default class UpdadeCompanyController {
   constructor(readonly server: Elysia) {
     server
-      .use(ip())
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -30,11 +33,9 @@ export default class UpdadeCompanyController {
         async ({ body, ip, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            const { companyId, name, surname } = body as IUpdateCompany;
-
+            const { companyId, name, surname, active } = body as IUpdateCompany;
             set.status = 200;
-            return await UpdadeCompany({ tokenPayload, ip,companyId, name, surname });
+            return await UpdadeCompany({ tokenPayload, ip, companyId, name, surname, active });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -47,8 +48,6 @@ export default class UpdadeCompanyController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
             tags: ["Companies"],
             summary: "Update Company",
@@ -64,16 +63,24 @@ export default class UpdadeCompanyController {
             companyId: t.Optional(t.String()),
             name: t.Optional(t.String()),
             surname: t.Optional(t.String()),
+            active: t.Optional(t.Boolean()),
             serviceId: t.Optional(t.String()),
           }),
 
           response: {
-            200: t.Object({
-              id: t.String(),
-              name: t.String(),
-              surname: t.String(),
-              ein: t.String(),
-            }, { description: "Success" }),
+            200: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                surname: t.String(),
+                ein: t.String(),
+                active: t.Boolean(),
+                readOnly: t.Boolean(),
+                createdAt: t.Date(),
+                updatedAt: t.Date(),
+              },
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

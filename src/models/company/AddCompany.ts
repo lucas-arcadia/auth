@@ -1,10 +1,12 @@
+import { Company } from "@prisma/client";
 import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 import { AddUser } from "../user/AddUser";
-import { IAddCompany, ICompany } from "./CompanyInterfaces";
+import { IAddCompany } from "./CompanyInterfaces";
+import { GetCompany } from "./GetCompany";
 
-export async function AddCompany(input: IAddCompany): Promise<ICompany> {
+export async function AddCompany(input: IAddCompany): Promise<Company> {
   try {
     await checkPermission({
       tokenPayload: input.tokenPayload,
@@ -28,7 +30,7 @@ export async function AddCompany(input: IAddCompany): Promise<ICompany> {
         surname: input.company.surname,
         ein: input.company.ein,
         active: true,
-        imutable: false,
+        readOnly: false,
         Service: {
           connect: { name: "Company" },
         },
@@ -46,7 +48,17 @@ export async function AddCompany(input: IAddCompany): Promise<ICompany> {
       ruleId: ruleCompanyManager.id,
     });
 
-    return company;
+    const result = await prisma.company.findUnique({
+      where: { id: company.id },
+      include: {
+        User: {
+          omit: { hash: true },
+        },
+      },
+    });
+    if (!result) throw new Error("Company not found");
+    
+    return result;
   } catch (error) {
     new AuditTrail(
       "AddCompany",

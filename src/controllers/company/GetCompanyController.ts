@@ -1,5 +1,4 @@
 import Elysia, { t } from "elysia";
-import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { GetCompany } from "../../models/company/GetCompany";
 import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
@@ -7,7 +6,11 @@ import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
 export default class GetCompanyController {
   constructor(readonly server: Elysia) {
     server
-      .use(ip())
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -25,13 +28,11 @@ export default class GetCompanyController {
       })
 
       .get(
-        "/company",
-        async ({ ip, query: { companyId, depth }, set, tokenPayload }) => {
+        "/company/:id",
+        async ({ ip, params: { id }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            set.status = 200;
-            return await GetCompany({ tokenPayload, ip, companyId, depth });
+            return await GetCompany({ tokenPayload, ip, id });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -44,8 +45,6 @@ export default class GetCompanyController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
             tags: ["Companies"],
             summary: "Get Company",
@@ -57,24 +56,24 @@ export default class GetCompanyController {
             authorization: ElysiaHeader.authorization,
           }),
 
-          query: t.Object({
-            companyId: ElysiaQuery.companyId,
-            depth: ElysiaQuery.depth,
+          params: t.Object({
+            id: t.String({ description: "Company ID", error: JSON.stringify({ message: "The company ID is required" }) }),
           }),
 
           response: {
-            200: t.Object({
-              id: t.String(),
-              name: t.String(),
-              surname: t.String(),
-              ein: t.String(),
-              active: t.Optional(t.Boolean()),
-              createdAt: t.Optional(t.Date()),
-              updatedAt: t.Optional(t.Date()),
-              User: t.Optional(t.Any()),
-              Contact: t.Optional(t.Any()),
-              Service: t.Optional(t.Any()),
-            }, { description: "Success" }),
+            200: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                surname: t.String(),
+                ein: t.String(),
+                active: t.Optional(t.Boolean()),
+                readOnly: t.Optional(t.Boolean()),
+                createdAt: t.Optional(t.Date()),
+                updatedAt: t.Optional(t.Date()),
+              },
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

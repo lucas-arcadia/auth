@@ -9,7 +9,7 @@ export interface ICompany {
   surname: string;
   ein: string;
   active?: boolean;
-  imutable?: boolean;
+  readOnly?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   User?: IUser[];
@@ -33,39 +33,11 @@ export interface IAddCompany {
   };
 }
 
-export interface IGetCompany {
-  tokenPayload: ITokenPayload;
-  ip: string;
-  companyId?: string;
-  depth?: string;
-}
-
-export interface IListCompanyQuery {
-  tokenPayload: ITokenPayload;
-  ip: string;
-  depth?: string;
-  limit?: string;
-  page?: string;
-  sort?: string;
-  where?: string;
-}
-
-export interface IListCompany {
-  docs: ICompany[],
-  totalDocs: number,
-  limit: number,
-  totalPages: number,
-  page: number,
-  hasPrevPage: boolean,
-  hasNextPage: boolean,
-  prevPage: number | null,
-  nextPage: number | null,
-}
-
 export interface IUpdateCompany {
   tokenPayload: ITokenPayload;
   ip: string;
   companyId?: string;
   name?: string;
   surname?: string;
+  active?: boolean;
 }

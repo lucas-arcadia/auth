@@ -8,7 +8,11 @@ import { ElysiaHeader, ElysiaResponse } from "../common/common";
 export default class AddCompanyController {
   constructor(readonly server: Elysia) {
     server
-      .use(ip())
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -28,9 +32,7 @@ export default class AddCompanyController {
         async ({ body, ip, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
             const { company, user } = body as IAddCompany;
-
             set.status = 201;
             return await AddCompany({ tokenPayload, ip, company, user });
           } catch (error: any) {
@@ -46,8 +48,6 @@ export default class AddCompanyController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
             tags: ["Companies"],
             summary: "Add Company",
@@ -71,24 +71,28 @@ export default class AddCompanyController {
               phone: t.String({ minLength: 8, error: "user phone: Minimum 8 characters" }),
               password: t.String({
                 minLength: 8,
-                pattern: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!#$%&*()-+_=,.<>?])(?=.*[ ]?).{8,}$",
+                pattern: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!#$%&*@()-+_=,.<>?])(?=.*[ ]?).{8,}$",
                 default: "Password123@",
-                error: "user password: Minimum of 8 characters, including at least one lowercase letter, one uppercase letter, one number and one special character from the list !#$%&*()-+_=,.<>?",
+                error: "user password: Minimum of 8 characters, including at least one lowercase letter, one uppercase letter, one number and one special character from the list !#$%&*@()-+_=,.<>?",
               }),
             }),
           }),
 
           response: {
-            201: t.Object({
-              id: t.String(),
-              name: t.String(),
-              surname: t.String(),
-              ein: t.String(),
-              active: t.Optional(t.Boolean()),
-              imutable: t.Optional(t.Boolean()),
-              createdAt: t.Optional(t.Date()),
-              updatedAt: t.Optional(t.Date()),
-            }, { description: "Success" }),
+            201: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                surname: t.String(),
+                ein: t.String(),
+                active: t.Optional(t.Boolean()),
+                readOnly: t.Optional(t.Boolean()),
+                createdAt: t.Optional(t.Date()),
+                updatedAt: t.Optional(t.Date()),
+                User: t.Optional(t.Any()),
+              },
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],
