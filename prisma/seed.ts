@@ -677,6 +677,26 @@ try {
   });
 
   /* ************************************************************************ */
+  /* Company common rules
+  /* ************************************************************************ */
+  const companyCommonRules = await prisma.rule.create({
+    data: {
+      name: "CompanyCommon",
+      description: "Company Common User",
+      readOnly: true,
+    },
+  });
+
+  await prisma.rule.update({
+    where: { id: companyCommonRules.id },
+    data: {
+      Policy: {
+        set: [PolicyAboutMe, PolicyGetPermission, PolicyPassword],
+      },
+    },
+  });
+
+  /* ************************************************************************ */
   /* Ombudsman manager rules
   /* ************************************************************************ */
   const ombudsmanManagerRules = await prisma.rule.create({

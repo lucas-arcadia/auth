@@ -31,6 +31,11 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
     });
     if (!user) throw new Error("User not found");
 
+    if (user.readOnly) {
+      new AuditTrail("UpdateUser", "User", `User ${user.name} (${user.id}) is read only`, input.tokenPayload.u, JSON.stringify({user}), input.ip);
+      throw new Error("User is read only");
+    }
+
     let hasChange = false;
 
     if (input.name && input.name !== user.name) hasChange = true;
