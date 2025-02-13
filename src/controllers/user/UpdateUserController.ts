@@ -1,5 +1,4 @@
 import Elysia, { t } from "elysia";
-import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { UpdateUser } from "../../models/user/UpdateUser";
 import { IUpdateUser } from "../../models/user/UserInterface";
@@ -8,7 +7,11 @@ import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
 export default class UpdateUserController {
   constructor(readonly server: Elysia) {
     server
-      .use(ip())
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -47,8 +50,6 @@ export default class UpdateUserController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
             tags: ["Users"],
             summary: "Update User",
