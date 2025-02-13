@@ -71,6 +71,7 @@ export interface IUpdateUser {
   active?: boolean;
   attempts?: number;
   ruleId?: string;
+  password?: string;
 }
 
 export interface IUserPermissionQuery {

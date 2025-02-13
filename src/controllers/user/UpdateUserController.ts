@@ -30,14 +30,11 @@ export default class UpdateUserController {
 
       .patch(
         "/user/:id",
-        async ({ body, ip, query: { companyId }, params: { id }, set, tokenPayload }) => {
+        async ({ body, ip, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            const { companyId, name, phone, active, attempts, ruleId } = body as IUpdateUser;
-
-            set.status = 200;
-            return await UpdateUser({ tokenPayload, ip, id, companyId, name, phone, active, attempts, ruleId });
+            const {id, companyId, name, phone, active, attempts, ruleId, password } = body as IUpdateUser;
+            return await UpdateUser({ tokenPayload, ip, id, companyId, name, phone, active, attempts, ruleId, password });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -61,21 +58,19 @@ export default class UpdateUserController {
             authorization: ElysiaHeader.authorization,
           }),
 
-          query: t.Object({
-            companyId: ElysiaQuery.companyId,
-          }),
-
           params: t.Object({
             id: t.String({ description: "User ID", error: JSON.stringify({ message: "The user ID is required" }) }),
           }),
 
           body: t.Object({
+            id: t.String(),
             companyId: t.Optional(t.String()),
             name: t.Optional(t.String()),
             phone: t.Optional(t.String()),
             active: t.Optional(t.Boolean()),
             attempts: t.Optional(t.Number()),
             ruleId: t.Optional(t.String()),
+            password: t.Optional(t.String()),
           }),
 
           response: {

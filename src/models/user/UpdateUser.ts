@@ -15,11 +15,7 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
     let companyId = input.tokenPayload.c || undefined;
     if (input.companyId) {
       if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
-        if (input.companyId === "all") {
-          companyId = undefined; // Allow access to all users
-        } else {
-          companyId = input.companyId;
-        }
+        companyId = input.companyId;
       }
     }
 
@@ -32,7 +28,7 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
     if (!user) throw new Error("User not found");
 
     if (user.readOnly) {
-      new AuditTrail("UpdateUser", "User", `User ${user.name} (${user.id}) is read only`, input.tokenPayload.u, JSON.stringify({user}), input.ip);
+      new AuditTrail("UpdateUser", "User", `User ${user.name} (${user.id}) is read only`, input.tokenPayload.u, JSON.stringify({ user }), input.ip);
       throw new Error("User is read only");
     }
 
@@ -45,7 +41,7 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
     if (input.ruleId && input.ruleId !== user.ruleId) hasChange = true;
 
     if (hasChange) {
-      new AuditTrail("UpdateUser", "User", `User updated: ${user.name}`, input.tokenPayload.u, JSON.stringify({from: {name: user.name, phone: user.phone, active: user.active, attempts: user.attempts, ruleId: user.ruleId}, to: {name: input.name, phone: input.phone, active: input.active, attempts: input.attempts, ruleId: input.ruleId}}), input.ip);
+      new AuditTrail("UpdateUser", "User", `User updated: ${user.name}`, input.tokenPayload.u, JSON.stringify({ from: { name: user.name, phone: user.phone, active: user.active, attempts: user.attempts, ruleId: user.ruleId }, to: { name: input.name, phone: input.phone, active: input.active, attempts: input.attempts, ruleId: input.ruleId } }), input.ip);
 
       return prisma.user.update({
         where: {
