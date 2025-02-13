@@ -1,11 +1,12 @@
 import { createHash } from "crypto";
 import dateUtil from "../../libs/dateUtil";
 import jwt from "../../libs/jwt";
-import { prisma } from "../db";
+import { prisma, prismaRead } from "../db";
 
 export interface ILogin {
   username: string;
   password: string;
+  ip: string;
 }
 
 export interface IToken {
@@ -15,7 +16,7 @@ export interface IToken {
 export async function Login(input: ILogin): Promise<IToken> {
   try {
     // Search for the user
-    const user = await prisma.user.findUnique({
+    const user = await prismaRead.user.findUnique({
       where: {
         email: input.username,
         active: true,
@@ -24,7 +25,7 @@ export async function Login(input: ILogin): Promise<IToken> {
     if (!user) throw new Error("Unauthorized");
 
     // Search for the company
-    const company = await prisma.company.findUnique({
+    const company = await prismaRead.company.findUnique({
       where: {
         id: user.companyId,
         active: true,
@@ -78,7 +79,7 @@ export async function Login(input: ILogin): Promise<IToken> {
       throw new Error("Unauthorized");
     } else {
       // Log
-      const lastLogin = await prisma.userLogins.findFirst({
+      const lastLogin = await prismaRead.userLogins.findFirst({
         where: {
           userId: user.id,
           action: "Login",

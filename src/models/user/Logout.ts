@@ -1,6 +1,6 @@
 import { AuditTrail } from "../../libs/audit";
 import { ITokenPayload } from "../../libs/jwt";
-import { prisma } from "../db";
+import { prisma, prismaRead } from "../db";
 
 export interface ILogout {
   tokenPayload: ITokenPayload;
@@ -10,7 +10,7 @@ export interface ILogout {
 export async function Logout(input: ILogout): Promise<any> {
   try {
     // Procura o usuário
-    const user = await prisma.user.findUnique({
+    const user = await prismaRead.user.findUnique({
       where: {
         id: input.tokenPayload.u,
         active: true,
@@ -19,7 +19,7 @@ export async function Logout(input: ILogout): Promise<any> {
     if (!user) throw new Error("Unauthorized");
 
     // Procura a empresa
-    const company = await prisma.company.findUnique({
+    const company = await prismaRead.company.findUnique({
       where: {
         id: user.companyId,
         active: true,
@@ -28,7 +28,7 @@ export async function Logout(input: ILogout): Promise<any> {
     if (!company) throw new Error("Unauthorized");
 
     // Procura pelo último login válido do usuário. Utilizaremos o token
-    const lastLogin = await prisma.userLogins.findFirst({
+    const lastLogin = await prismaRead.userLogins.findFirst({
       where: {
         userId: user.id,
         action: "Login",

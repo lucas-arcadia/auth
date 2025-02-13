@@ -10,7 +10,7 @@ try {
     data: {
       name: "Company",
       description: "Business management service",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -18,7 +18,7 @@ try {
     data: {
       name: "Ombudsman",
       description: "Ombudsman Management Service",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -26,7 +26,7 @@ try {
     data: {
       name: "File",
       description: "File Management Service",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -34,7 +34,7 @@ try {
     data: {
       name: "Custodian",
       description: "Custodian Management Service",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -46,7 +46,7 @@ try {
       serviceId: CompanyService.id,
       description: "Add a new Company",
       action: "AddCompany",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -55,7 +55,7 @@ try {
       serviceId: CompanyService.id,
       description: "Get Company Information",
       action: "GetCompany",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -64,7 +64,7 @@ try {
       serviceId: CompanyService.id,
       description: "List Companies",
       action: "ListCompany",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -73,7 +73,7 @@ try {
       serviceId: CompanyService.id,
       description: "Update Company Information",
       action: "UpdateCompany",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -82,7 +82,7 @@ try {
       serviceId: CompanyService.id,
       description: "Delete Company Information",
       action: "DeleteCompany",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -94,7 +94,7 @@ try {
       serviceId: CompanyService.id,
       description: "Add a new service",
       action: "AddService",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -103,7 +103,7 @@ try {
       serviceId: CompanyService.id,
       description: "Get Service Information",
       action: "GetService",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -112,7 +112,7 @@ try {
       serviceId: CompanyService.id,
       description: "List Services",
       action: "ListService",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -121,7 +121,7 @@ try {
       serviceId: CompanyService.id,
       description: "Update Service Information",
       action: "UpdateService",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -130,7 +130,7 @@ try {
       serviceId: CompanyService.id,
       description: "Delete Service Information",
       action: "DeleteService",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -142,7 +142,7 @@ try {
       serviceId: CompanyService.id,
       description: "Add Contact Information",
       action: "AddContact",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -151,7 +151,7 @@ try {
       serviceId: CompanyService.id,
       description: "Get Contact Information",
       action: "GetContact",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -160,7 +160,7 @@ try {
       serviceId: CompanyService.id,
       description: "List Contacts",
       action: "ListContact",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -169,7 +169,7 @@ try {
       serviceId: CompanyService.id,
       description: "Update Contact Information",
       action: "UpdateContact",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -178,7 +178,7 @@ try {
       serviceId: CompanyService.id,
       description: "Delete Contact Information",
       action: "DeleteContact",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -190,7 +190,7 @@ try {
       serviceId: CompanyService.id,
       description: "Add User Information",
       action: "AddUser",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -199,7 +199,7 @@ try {
       serviceId: CompanyService.id,
       description: "Get User Information",
       action: "GetUser",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -208,7 +208,7 @@ try {
       serviceId: CompanyService.id,
       description: "List Users",
       action: "ListUser",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -217,7 +217,7 @@ try {
       serviceId: CompanyService.id,
       description: "Update User Information",
       action: "UpdateUser",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -226,7 +226,7 @@ try {
       serviceId: CompanyService.id,
       description: "Delete User Information",
       action: "DeleteUser",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -235,7 +235,7 @@ try {
       serviceId: CompanyService.id,
       description: "Get information about your user",
       action: "AboutMe",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -244,7 +244,7 @@ try {
       serviceId: CompanyService.id,
       description: "Get User Permissions",
       action: "GetPermission",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -253,7 +253,7 @@ try {
       serviceId: CompanyService.id,
       description: "Set User Permissions",
       action: "SetPermission",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -262,7 +262,7 @@ try {
       serviceId: CompanyService.id,
       description: "Set User Password",
       action: "Password",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -274,7 +274,7 @@ try {
       serviceId: CompanyService.id,
       description: "Add Policy Information",
       action: "AddPolicy",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -283,7 +283,7 @@ try {
       serviceId: CompanyService.id,
       description: "Get Policy Information",
       action: "GetPolicy",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -292,7 +292,7 @@ try {
       serviceId: CompanyService.id,
       description: "List Policies",
       action: "ListPolicy",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -301,7 +301,7 @@ try {
       serviceId: CompanyService.id,
       description: "Update Policy Information",
       action: "UpdatePolicy",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -310,7 +310,7 @@ try {
       serviceId: CompanyService.id,
       description: "Delete Policy Information",
       action: "DeletePolicy",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -322,7 +322,7 @@ try {
       serviceId: CompanyService.id,
       description: "Add Rule Information",
       action: "AddRule",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -331,7 +331,7 @@ try {
       serviceId: CompanyService.id,
       description: "Get Rule Information",
       action: "GetRule",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -340,7 +340,7 @@ try {
       serviceId: CompanyService.id,
       description: "List Rules",
       action: "ListRule",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -349,7 +349,7 @@ try {
       serviceId: CompanyService.id,
       description: "Update Rule Information",
       action: "UpdateRule",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -358,7 +358,7 @@ try {
       serviceId: CompanyService.id,
       description: "Delete Rule Information",
       action: "DeleteRule",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -370,7 +370,7 @@ try {
       serviceId: OmbudsmanService.id,
       description: "Add Manifestation Information",
       action: "AddManifestation",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -379,7 +379,7 @@ try {
       serviceId: OmbudsmanService.id,
       description: "Get Manifestation Information",
       action: "GetManifestation",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -388,7 +388,7 @@ try {
       serviceId: OmbudsmanService.id,
       description: "List Manifestations",
       action: "ListManifestation",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -397,7 +397,7 @@ try {
       serviceId: OmbudsmanService.id,
       description: "Update Manifestation Information",
       action: "UpdateManifestation",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -406,7 +406,7 @@ try {
       serviceId: OmbudsmanService.id,
       description: "Add Manifestation Response Information",
       action: "AddManifestationResponse",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -415,7 +415,7 @@ try {
       serviceId: OmbudsmanService.id,
       description: "List Manifestation Responses",
       action: "ListManifestationResponses",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -427,7 +427,7 @@ try {
       serviceId: FileService.id,
       description: "Add File Information",
       action: "AddFile",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -436,7 +436,7 @@ try {
       serviceId: FileService.id,
       description: "Add Folder Information",
       action: "AddFolder",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -445,7 +445,7 @@ try {
       serviceId: FileService.id,
       description: "Get File Information",
       action: "GetFile",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -454,7 +454,7 @@ try {
       serviceId: FileService.id,
       description: "Get Folder Information",
       action: "GetFolder",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -463,7 +463,7 @@ try {
       serviceId: FileService.id,
       description: "List Files",
       action: "ListFile",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -472,7 +472,7 @@ try {
       serviceId: FileService.id,
       description: "List Folders",
       action: "ListFolder",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -481,7 +481,7 @@ try {
       serviceId: FileService.id,
       description: "Update File Information",
       action: "UpdateFile",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -490,7 +490,7 @@ try {
       serviceId: FileService.id,
       description: "Update Folder Information",
       action: "UpdateFolder",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -499,7 +499,7 @@ try {
       serviceId: FileService.id,
       description: "Delete File Information",
       action: "DeleteFile",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -508,7 +508,7 @@ try {
       serviceId: FileService.id,
       description: "Delete Folder Information",
       action: "DeleteFolder",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -517,7 +517,7 @@ try {
       serviceId: FileService.id,
       description: "Get File Version Information",
       action: "GetFileVersion",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -526,7 +526,7 @@ try {
       serviceId: FileService.id,
       description: "List File Versions",
       action: "ListFileVersions",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -535,7 +535,7 @@ try {
       serviceId: FileService.id,
       description: "Delete File Version Information",
       action: "DeleteFileVersion",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -547,7 +547,7 @@ try {
       serviceId: CustodianService.id,
       description: "Report Annual Tax Statement",
       action: "ReportAnnualTaxStatement",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -556,7 +556,7 @@ try {
       serviceId: CustodianService.id,
       description: "Report Balance",
       action: "ReportBalance",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -565,7 +565,7 @@ try {
       serviceId: CustodianService.id,
       description: "Withdrawal",
       action: "Withdrawal",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -574,7 +574,7 @@ try {
       serviceId: CustodianService.id,
       description: "Deposit",
       action: "Deposit",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -583,7 +583,7 @@ try {
       serviceId: CustodianService.id,
       description: "Transfer",
       action: "Transfer",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -592,7 +592,7 @@ try {
       serviceId: CustodianService.id,
       description: "List Custodian Accounts",
       action: "ListCustodianAccount",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -601,7 +601,7 @@ try {
       serviceId: CustodianService.id,
       description: "List Custodian Products",
       action: "ListCustodianProduct",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -610,7 +610,7 @@ try {
       serviceId: CustodianService.id,
       description: "Get Custodian Product",
       action: "GetCustodianProduct",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -623,7 +623,7 @@ try {
     data: {
       name: "Administrator",
       description: "General Administrator",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -643,7 +643,7 @@ try {
     data: {
       name: "Manager",
       description: "General Manager",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -663,7 +663,7 @@ try {
     data: {
       name: "CompanyManager",
       description: "Company Manager",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -683,7 +683,7 @@ try {
     data: {
       name: "OmbudsmanManager",
       description: "Ombudsman Manager",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -703,7 +703,7 @@ try {
     data: {
       name: "FileManager",
       description: "File Manager",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -724,7 +724,7 @@ try {
     data: {
       name: "CustodianOperator",
       description: "Custodian Operator",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -741,7 +741,7 @@ try {
     data: {
       name: "CustodianLiquidator",
       description: "Custodian Liquidator",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -758,7 +758,7 @@ try {
     data: {
       name: "CustodianAuditor",
       description: "Custodian Auditor",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -775,7 +775,7 @@ try {
     data: {
       name: "CustodianCustomer",
       description: "Custodian Customer",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -796,7 +796,7 @@ try {
       name: "CSI Tech Informática Ltda - ME",
       surname: "CSI Tech",
       ein: "13019142000142",
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -815,7 +815,7 @@ try {
       name: "RBM - Recuperadora Brasileira de Metais S/A",
       surname: "RBM",
       ein: "12698756000135",
-      imutable: false,
+      readOnly: false,
     },
   });
 
@@ -840,7 +840,7 @@ try {
       hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
       companyId: csitechCompany.id,
       ruleId: adminRules.id,
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -852,7 +852,7 @@ try {
       hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
       companyId: csitechCompany.id,
       ruleId: adminRules.id,
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -865,7 +865,7 @@ try {
       hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
       companyId: csitechCompany.id,
       ruleId: managerRules.id,
-      imutable: true,
+      readOnly: true,
     },
   });
 
@@ -878,7 +878,7 @@ try {
       hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
       companyId: rbmCompany.id,
       ruleId: managerRules.id,
-      imutable: false,
+      readOnly: false,
     },
   });
 
@@ -891,7 +891,7 @@ try {
       hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
       companyId: rbmCompany.id,
       ruleId: custodianOperatorRules.id,
-      imutable: false,
+      readOnly: false,
     }
   });
 
@@ -904,7 +904,7 @@ try {
       hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
       companyId: rbmCompany.id,
       ruleId: custodianLiquidatorRules.id,
-      imutable: false,
+      readOnly: false,
     }
   });
 
@@ -917,7 +917,7 @@ try {
       hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
       companyId: rbmCompany.id,
       ruleId: custodianAuditorRules.id,
-      imutable: false,
+      readOnly: false,
     }
   });
 
@@ -930,7 +930,7 @@ try {
       hash: "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJEs1dXEwaW95aUdQOTlCazRlaTZRa3dJdzZERGVZZnBvaDc2QklHQkR5S00kaWJIcFdaNXIwSmlpMk9MMmVtcDZYR1hlWXJsNkpYeVEwNUtiZHpkdm1aOA==",
       companyId: rbmCompany.id,
       ruleId: custodianCustomerRules.id,
-      imutable: false,
+      readOnly: false,
     }
   });
 

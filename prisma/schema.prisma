@@ -7,8 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Company {
@@ -20,7 +21,7 @@ model Company {
   Contact   Contact[]
   User      User[]
   Service   Service[]
-  imutable  Boolean
+  readOnly  Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -59,7 +60,7 @@ model User {
   companyId  String
   Rule       Rule         @relation(fields: [ruleId], references: [id])
   ruleId     String
-  imutable   Boolean
+  readOnly   Boolean      @default(false)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   UserLogins UserLogins[]
@@ -92,7 +93,7 @@ model Service {
   active      Boolean   @default(true)
   Company     Company[]
   Policy      Policy[]
-  imutable    Boolean
+  readOnly    Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -107,7 +108,7 @@ model Policy {
   action      String
   active      Boolean  @default(true)
   Rule        Rule[]
-  imutable    Boolean
+  readOnly    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -122,7 +123,7 @@ model Rule {
   description String   @db.Text()
   Policy      Policy[]
   User        User[]
-  imutable    Boolean
+  readOnly    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

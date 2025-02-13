@@ -1,5 +1,4 @@
 import Elysia, { t } from "elysia";
-import { ip } from "elysia-ip";
 import jwt from "../../libs/jwt";
 import { ListUsers } from "../../models/user/ListUser";
 import { ElysiaHeader, ElysiaPaginationReturn, ElysiaQuery, ElysiaResponse } from "../common/common";
@@ -7,7 +6,11 @@ import { ElysiaHeader, ElysiaPaginationReturn, ElysiaQuery, ElysiaResponse } fro
 export default class ListUserController {
   constructor(readonly server: Elysia) {
     server
-      .use(ip())
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip");
+        return { ip: clientIp };
+      })
+      
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -31,7 +34,14 @@ export default class ListUserController {
             if (!tokenPayload) throw new Error("Unauthorized");
 
             set.status = 200;
-            return await ListUsers({ tokenPayload, ip, companyId, depth, limit, page });
+            set.headers["Content-Encoding"] = "gzip";
+            set.headers["Content-Type"] = "application/json";
+
+            const encoder = new TextEncoder();
+
+            const response = await ListUsers({ tokenPayload, ip: ip || "", companyId, depth, limit, page });
+            return  new Response(Bun.gzipSync(encoder.encode(JSON.stringify(response)))) ;
+            // return response;
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -44,8 +54,6 @@ export default class ListUserController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
             tags: ["Users"],
             summary: "List users",
@@ -55,6 +63,7 @@ export default class ListUserController {
 
           headers: t.Object({
             authorization: ElysiaHeader.authorization,
+            // "Content-Encoding": t.String()
           }),
 
           query: t.Object({
@@ -64,31 +73,34 @@ export default class ListUserController {
             page: ElysiaQuery.page,
           }),
 
-          response: {
-            200: t.Object({
-              docs: t.Array(
-                t.Object({
-                  id: t.String(),
-                  name: t.String(),
-                  email: t.String(),
-                  phone: t.String(),
-                  active: t.Boolean(),
-                  attempts: t.Number(),
-                  companyId: t.String(),
-                  ruleId: t.String(),
-                  createdAt: t.Date(),
-                  updatedAt: t.Date(),
-                  Company: t.Optional(t.Any()),
-                  Role: t.Optional(t.Any()),
-                })
-              ),
-              ...ElysiaPaginationReturn,
-            }, { description: "Success" }),
-            401: ElysiaResponse[401],
-            403: ElysiaResponse[403],
-            404: ElysiaResponse[404],
-            500: ElysiaResponse[500],
-          },
+          // response: {
+          //   200: t.Object(
+          //     {
+          //       docs: t.Array(
+          //         t.Object({
+          //           id: t.String(),
+          //           name: t.String(),
+          //           email: t.String(),
+          //           phone: t.String(),
+          //           active: t.Boolean(),
+          //           attempts: t.Number(),
+          //           companyId: t.String(),
+          //           ruleId: t.String(),
+          //           createdAt: t.Date(),
+          //           updatedAt: t.Date(),
+          //           Company: t.Optional(t.Any()),
+          //           Role: t.Optional(t.Any()),
+          //         })
+          //       ),
+          //       ...ElysiaPaginationReturn,
+          //     },
+          //     { description: "Success" }
+          //   ),
+          //   401: ElysiaResponse[401],
+          //   403: ElysiaResponse[403],
+          //   404: ElysiaResponse[404],
+          //   500: ElysiaResponse[500],
+          // },
         }
       );
   }

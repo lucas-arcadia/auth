@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
 import cors from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
-import compression from "elysia-compress";
+// import compression from "elysia-compress";
 // import { rateLimit } from "elysia-rate-limit"
 
 // Companies
@@ -54,9 +54,9 @@ app.use(
     },
     documentation: {
       info: {
-        title: "API do serviço Empresa",
-        description: "Endpoints da API do serviço Empresa.",
-        version: "1.0.50",
+        title: "User Service API",
+        description: "Endpoints of the User service API.",
+        version: "1.0.51",
       },
     },
   })
@@ -67,7 +67,7 @@ app.use(
     allowedHeaders: ["Authorization", "Content-Type"],
   })
 );
-app.use(compression());
+// app.use(compression({ as: "scoped"}));
 
 // app.use(rateLimit())
 

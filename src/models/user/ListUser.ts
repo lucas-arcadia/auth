@@ -1,6 +1,6 @@
 import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
-import { prisma } from "../db";
+import { prisma, prismaRead } from "../db";
 import { IListUser, IListUserQuery } from "./UserInterface";
 
 export async function ListUsers(input: IListUserQuery): Promise<IListUser> {
@@ -37,9 +37,9 @@ export async function ListUsers(input: IListUserQuery): Promise<IListUser> {
 
     const skip = page === 1 ? 0 : page * limit - limit || 0;
 
-    const totalPages = Math.ceil((await prisma.user.count()) / limit) || 0;
+    const totalPages = Math.ceil((await prismaRead.user.count()) / limit) || 0;
 
-    const users = await prisma.user.findMany({
+    const users = await prismaRead.user.findMany({
       skip,
       take: limit,
       where: whereClause,
