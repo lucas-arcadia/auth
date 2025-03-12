@@ -1,8 +1,10 @@
+import { Contact } from "@prisma/client";
+import { IGet } from "../../controllers/common/interfaces";
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
-import { IContact, IGetContact } from "./ContactInterfaces";
 
-export async function GetContact(input: IGetContact): Promise<IContact> {
+export async function GetContact(input: IGet): Promise<Contact> {
   try {
     const permission = await checkPermission({
       tokenPayload: input.tokenPayload,
@@ -18,25 +20,19 @@ export async function GetContact(input: IGetContact): Promise<IContact> {
 
     const result = await prisma.contact.findUnique({
       where: { 
-        id: input.id 
+        id: input.id,
+        companyId: companyId
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        active: true,
-        companyId: true,
-        createdAt: true,
-        updatedAt: true,
+      include: {
         Company: input.depth !== undefined ? true : false
       },
     });
-
     if (!result) throw new Error("Contact not found");
 
     return result;
   } catch (error) {
+    new AuditTrail("GetContact", "Contact", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
+
     throw error;
   }
 }

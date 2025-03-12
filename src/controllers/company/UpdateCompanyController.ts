@@ -30,12 +30,11 @@ export default class UpdadeCompanyController {
 
       .patch(
         "/company",
-        async ({ body, ip, set, tokenPayload }) => {
+        async ({ tokenPayload, ip, body, set }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-            const { companyId, name, surname, active } = body as IUpdateCompany;
-            set.status = 200;
-            return await UpdadeCompany({ tokenPayload, ip, companyId, name, surname, active });
+            const { id, name, surname, active } = body as IUpdateCompany;
+            return await UpdadeCompany({ tokenPayload, ip, id, name, surname, active });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -49,7 +48,7 @@ export default class UpdadeCompanyController {
         },
         {
           detail: {
-            tags: ["Companies"],
+            tags: ["Company"],
             summary: "Update Company",
             description: "Update a company",
             operationId: "UpdateCompany",
@@ -60,7 +59,7 @@ export default class UpdadeCompanyController {
           }),
 
           body: t.Object({
-            companyId: t.Optional(t.String()),
+            id: t.Optional(t.String()),
             name: t.Optional(t.String()),
             surname: t.Optional(t.String()),
             active: t.Optional(t.Boolean()),

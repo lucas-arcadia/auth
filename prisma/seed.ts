@@ -691,7 +691,7 @@ try {
     where: { id: companyCommonRules.id },
     data: {
       Policy: {
-        set: [PolicyAboutMe, PolicyGetPermission, PolicyPassword],
+        set: [PolicyAboutMe, PolicyGetPermission, PolicyPassword, PolicyGetCompany],
       },
     },
   });
@@ -845,6 +845,45 @@ try {
       Service: {
         set: [CompanyService, OmbudsmanService],
       },
+    },
+  });
+
+  /* ************************************************************************ */
+  /* Contacts
+  /* ************************************************************************ */
+  await prisma.contact.create({
+    data: {
+      name: "Contato 01 da empresa CSI Tech",
+      email: "contato01.csitech@email.com",
+      phone: "+5511992000071",
+      companyId: csitechCompany.id,
+    },
+  });
+
+  await prisma.contact.create({
+    data: {
+      name: "Contato 02 da empresa CSI Tech",
+      email: "contato02.csitech@email.com",
+      phone: "+5511992000071",
+      companyId: csitechCompany.id,
+    },
+  });
+
+  await prisma.contact.create({
+    data: {
+      name: "Contato 01 da empresa RBM",
+      email: "contato01.rbm@email.com",
+      phone: "+5511992000071",
+      companyId: rbmCompany.id,
+    },
+  });
+
+  await prisma.contact.create({
+    data: {
+      name: "Contato 02 da empresa RBM",
+      email: "contato02.rbm@email.com",
+      phone: "+5511992000071",
+      companyId: rbmCompany.id,
     },
   });
 

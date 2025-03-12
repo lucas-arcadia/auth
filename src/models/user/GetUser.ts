@@ -12,27 +12,33 @@ export async function GetUser(input: IGetUser): Promise<IUser> {
       prisma,
     });
 
-    let whereClause: any = { id: input.id, Company: { active: true } };
 
+    let companyId = input.tokenPayload.c;
     if (input.companyId) {
-      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
-        if (input.companyId === "all") {
-          // If companyId is "all", we do not include the companyId condition in the where
-          whereClause.companyId = undefined;
-        } else {
-          whereClause.companyId = input.companyId;
-        }
-      } else {
-        whereClause.companyId = input.tokenPayload.c;
-      }
-    } else {
-      whereClause.companyId = input.tokenPayload.c;
+      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId
     }
+
+    // let whereClause: any = { id: input.id, Company: { active: true } };
+
+    // if (input.companyId) {
+    //   if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
+    //     if (input.companyId === "all") {
+    //       // If companyId is "all", we do not include the companyId condition in the where
+    //       whereClause.companyId = undefined;
+    //     } else {
+    //       whereClause.companyId = input.companyId;
+    //     }
+    //   } else {
+    //     whereClause.companyId = input.tokenPayload.c;
+    //   }
+    // } else {
+    //   whereClause.companyId = input.tokenPayload.c;
+    // }
 
     // whereClause.Company = { active: true };
 
     const user = await prisma.user.findUnique({
-      where: whereClause,
+      where: { id: input.id, companyId: companyId },
       select: {
         id: true,
         name: true,

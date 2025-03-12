@@ -33,15 +33,13 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
     }
 
     let hasChange = false;
-
     if (input.name && input.name !== user.name) hasChange = true;
     if (input.phone && input.phone !== user.phone) hasChange = true;
     if (input.active !== undefined && input.active !== user.active) hasChange = true;
-    if (input.attempts && input.attempts !== user.attempts) hasChange = true;
     if (input.ruleId && input.ruleId !== user.ruleId) hasChange = true;
 
     if (hasChange) {
-      new AuditTrail("UpdateUser", "User", `User updated: ${user.name}`, input.tokenPayload.u, JSON.stringify({ from: { name: user.name, phone: user.phone, active: user.active, attempts: user.attempts, ruleId: user.ruleId }, to: { name: input.name, phone: input.phone, active: input.active, attempts: input.attempts, ruleId: input.ruleId } }), input.ip);
+      new AuditTrail("UpdateUser", "User", `User updated: ${user.name}`, input.tokenPayload.u, JSON.stringify({ from: { name: user.name, phone: user.phone, active: user.active, attempts: user.attempts, ruleId: user.ruleId }, to: { name: input.name, phone: input.phone, active: input.active, ruleId: input.ruleId } }), input.ip);
 
       return prisma.user.update({
         where: {
@@ -51,8 +49,8 @@ export async function UpdateUser(input: IUpdateUser): Promise<IUser> {
         data: {
           name: input.name || user.name,
           phone: input.phone || user.phone,
-          active: input.active || user.active,
-          attempts: input.attempts || user.attempts,
+          active: input.active !== undefined ? input.active : user.active,
+          attempts: 0,
           ruleId: input.ruleId || user.ruleId,
         },
         select: {

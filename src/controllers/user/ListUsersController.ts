@@ -29,11 +29,10 @@ export default class ListUserController {
 
       .get(
         "/user/list",
-        async ({ ip, query: { companyId, depth, limit, page }, set, tokenPayload }) => {
+        async ({ ip, query: { companyId, depth }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            return await ListUsers({ tokenPayload, ip, companyId, depth, limit, page });
+            return await ListUsers({ tokenPayload, ip, companyId, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -55,37 +54,25 @@ export default class ListUserController {
 
           headers: t.Object({
             authorization: ElysiaHeader.authorization,
-            // "Content-Encoding": t.String()
           }),
 
           query: t.Object({
             companyId: ElysiaQuery.companyId,
             depth: ElysiaQuery.depth,
-            limit: ElysiaQuery.limit,
-            page: ElysiaQuery.page,
           }),
 
           response: {
-            200: t.Object(
-              {
-                docs: t.Array(
-                  t.Object({
-                    id: t.String(),
-                    name: t.String(),
-                    email: t.String(),
-                    phone: t.String(),
-                    active: t.Boolean(),
-                    attempts: t.Number(),
-                    companyId: t.String(),
-                    ruleId: t.String(),
-                    createdAt: t.Date(),
-                    updatedAt: t.Date(),
-                    Company: t.Optional(t.Any()),
-                    Role: t.Optional(t.Any()),
-                  })
-                ),
-                ...ElysiaPaginationReturn,
-              },
+            200: t.Array(
+              t.Object({
+                id: t.Optional(t.String()),
+                name: t.Optional(t.String()),
+                email: t.Optional(t.String()),
+                phone: t.Optional(t.String()),
+                active: t.Optional(t.Boolean()),
+                companyId: t.Optional(t.String()),
+                ruleId: t.Optional(t.String()),
+                updatedAt: t.Optional(t.Date()),
+              }),
               { description: "Success" }
             ),
             401: ElysiaResponse[401],

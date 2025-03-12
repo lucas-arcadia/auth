@@ -6,7 +6,7 @@ import { prisma } from "../db";
 
 export async function GetCompany(input: IGet): Promise<Company> {
   try {
-    const permission = await checkPermission({
+    await checkPermission({
       tokenPayload: input.tokenPayload,
       service: Services.Company,
       action: Actions.GetCompany,
@@ -17,19 +17,16 @@ export async function GetCompany(input: IGet): Promise<Company> {
       where: {
         id: input.id,
       },
+      include: {
+        User: input.depth !== undefined ? true : false,
+        Contact: input.depth !== undefined ? true : false,
+      },
     });
     if (!result) throw new Error("Company not found");
 
     return result;
   } catch (error) {
-    new AuditTrail(
-      "GetCompany",
-      "Company",
-      `error: ${error}`,
-      input.tokenPayload.u,
-      JSON.stringify(error),
-      input.ip,
-    );
+    new AuditTrail("GetCompany", "Company", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
 
     throw error;
   }

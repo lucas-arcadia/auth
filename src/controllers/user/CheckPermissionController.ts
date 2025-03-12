@@ -30,8 +30,6 @@ export default class CheckPermissionController {
         async ({ ip, params: { service, action }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            set.status = 200;
             const result = await CheckPermission(tokenPayload, ip, service, action);
             if (!result)
               return {

@@ -30,8 +30,6 @@ export default class AboutMeController {
         async ({ ip, query: { depth }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            set.status = 200;
             return await AboutMe({ tokenPayload, ip, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;

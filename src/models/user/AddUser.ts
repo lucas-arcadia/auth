@@ -12,16 +12,16 @@ export async function AddUser(input: IAddUser): Promise<IUser> {
       prisma,
     });
 
-    const exists = await prisma.user.findUnique({ where: { email: input.email } });
-    if (exists) throw new Error("User already exists.");
-
-    const rule = await prisma.rule.findUnique({ where: { id: input.ruleId } });
-    if (!rule) throw new Error("Rule not found");
+    const userExists = await prisma.user.findUnique({ where: { email: input.email } });
+    if (userExists) throw new Error("User already exists.");
 
     let companyId = input.tokenPayload.c;
     if (input.companyId) {
       if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId;
     }
+
+    const rule = await prisma.rule.findFirst({ where: { name: "CompanyCommon" } });
+    if (!rule) throw new Error("Rule not found");
 
     const hash = btoa(await Bun.password.hash(input.password));
 

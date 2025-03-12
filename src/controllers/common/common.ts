@@ -19,6 +19,7 @@ export const ElysiaResponse = {
   403: t.Object({ message: t.String() }, { description: "Forbidden" }),
   404: t.Object({ message: t.String() }, { description: "Not Found" }),
   409: t.Object({ message: t.String() }, { description: "Conflict"}),
+  422: t.Object({ message: t.String() }, { description: "Unprocessable Entity" }),
   500: t.Object({ message: t.String() }, { description: "Server Error" }),
 };
 

@@ -21,9 +21,6 @@ export async function AddCompany(input: IAddCompany): Promise<Company> {
     const userExists = await prisma.user.findUnique({ where: { email: input.user.email } });
     if (userExists) throw new Error("User already exists");
 
-    const ruleCompanyManager = await prisma.rule.findUnique({ where: { name: "CompanyManager" } });
-    if (!ruleCompanyManager) throw new Error("Rule Company Manager not found");
-
     const company = await prisma.company.create({
       data: {
         name: input.company.name,
@@ -45,7 +42,6 @@ export async function AddCompany(input: IAddCompany): Promise<Company> {
       phone: input.user.phone,
       password: input.user.password,
       companyId: company.id,
-      ruleId: ruleCompanyManager.id,
     });
 
     const result = await prisma.company.findUnique({
@@ -60,14 +56,8 @@ export async function AddCompany(input: IAddCompany): Promise<Company> {
     
     return result;
   } catch (error) {
-    new AuditTrail(
-      "AddCompany",
-      "Company",
-      `error: ${error}`,
-      input.tokenPayload.u,
-      JSON.stringify(error),
-      input.ip,
-    );
+    new AuditTrail("AddCompany", "Company", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
+    
     throw error;
   }
 }

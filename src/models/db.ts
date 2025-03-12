@@ -16,11 +16,11 @@ export const prisma =
     new PrismaClient({
       errorFormat: "pretty",
       log: ["info", "warn", "error"],
-      datasources: {
-        db: {
-          url: process.env.REPLICA_DATABASE_URL!,
-        }
-      }
+      // datasources: {
+      //   db: {
+      //     url: process.env.REPLICA_DATABASE_URL!,
+      //   }
+      // }
     })
   // .$extends(
   //   readReplicas({

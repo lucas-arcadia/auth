@@ -47,5 +47,5 @@ bun.lockb
 private.key
 public.key
 
-# Prisma Migrations
-prisma/migrations/
+# SQLite Database
+prisma/dev.db

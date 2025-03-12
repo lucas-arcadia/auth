@@ -89,21 +89,13 @@ export async function checkPermission(input: ICheckPermission): Promise<ITokenIn
         id: input.tokenPayload.u,
         active: true,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        hash: false,
-        active: true,
-        attempts: true,
-        createdAt: true,
-        updatedAt: true,
+      omit: {
+        hash: true,
       },
     });
     if (!user) throw new Error("Unauthorized. (UNF)");
 
-    const tokenIsLoginActive = await input.prisma.userLogins.findFirst({
+    const isLoginActive = await input.prisma.userLogins.findFirst({
       where: {
         AND: [
           {
@@ -122,21 +114,12 @@ export async function checkPermission(input: ICheckPermission): Promise<ITokenIn
       },
       take: 1,
     });
-    if (!tokenIsLoginActive) throw new Error("Unauthorized. (ULA)");
+    if (!isLoginActive) throw new Error("Unauthorized. (ULA)");
 
     const company = await input.prisma.company.findUnique({
       where: {
         id: input.tokenPayload.c,
         active: true,
-      },
-      select: {
-        id: true,
-        name: true,
-        surname: true,
-        ein: true,
-        active: true,
-        createdAt: true,
-        updatedAt: true,
       },
     });
     if (!company) throw new Error("Forbidden. (CNF)");
@@ -152,11 +135,18 @@ export async function checkPermission(input: ICheckPermission): Promise<ITokenIn
     });
     if (!rule) throw new Error("Forbidden. (RNF)");
 
-    const police = await input.prisma.policy.findFirst({
+    const service = await input.prisma.service.findUnique({
       where: {
-        action: input.action,
-        Service: {
-          name: input.service,
+        name: input.service,
+      },
+    });
+    if (!service) throw new Error("Forbidden. (SNF)");
+
+    const police = await input.prisma.policy.findUnique({
+      where: {
+        uniquePolicy: {
+          serviceId: service.id,
+          action: input.action,
         },
         Rule: {
           some: {

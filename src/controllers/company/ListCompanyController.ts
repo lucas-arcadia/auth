@@ -46,7 +46,7 @@ export default class ListCompanyController {
         },
         {
           detail: {
-            tags: ["Companies"],
+            tags: ["Company"],
             summary: "List Companies",
             description: "List the companies in the system.",
             operationId: "ListCompanies",
@@ -59,14 +59,14 @@ export default class ListCompanyController {
           response: {
             200: t.Array(
               t.Object({
-                id: t.String(),
-                name: t.String(),
-                surname: t.String(),
-                ein: t.String(),
-                active: t.Boolean(),
-                createdAt: t.Date(),
-                updatedAt: t.Date(),
-              })
+                id: t.Optional(t.String()),
+                name: t.Optional(t.String()),
+                surname: t.Optional(t.String()),
+                ein: t.Optional(t.String()),
+                active: t.Optional(t.Boolean()),
+                updatedAt: t.Optional(t.Date()),
+              }),
+              { description: "Success" }
             ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],

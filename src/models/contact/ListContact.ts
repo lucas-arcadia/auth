@@ -1,8 +1,10 @@
-import { prisma } from "../db";
+import { Contact } from "@prisma/client";
+import { IGet } from "../../controllers/common/interfaces";
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
-import { IListContact, IListContactQuery } from "./ContactInterfaces";
+import { prisma } from "../db";
 
-export async function ListContact(input: IListContactQuery): Promise<IListContact> {
+export async function ListContact(input: IGet): Promise<Partial<Contact>[]> {
   try {
     const permission = await checkPermission({
       tokenPayload: input.tokenPayload,
@@ -16,50 +18,22 @@ export async function ListContact(input: IListContactQuery): Promise<IListContac
       if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId;
     }
 
-    let limit = Math.round(Number(input.limit)) || 10;
-    let page = Math.round(Number(input.page)) || 1;
-
-    if (limit <= 0) limit = 10;
-    if (page <= 0) page = 1;
-
-    const skip = page === 1 ? 0 : page * limit - limit || 0;
-
-    const totalPages = Math.ceil((await prisma.user.count()) / limit) || 0;
-
     const result = await prisma.contact.findMany({
-      skip,
-      take: limit,
       where: {
         companyId: companyId,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        active: true,
-        companyId: true,
-        createdAt: true,
-        updatedAt: true,
-        Company: input.depth !== undefined ? true : false,
+      include: {
+        Company: input.depth !== undefined ? true: false,
       },
       orderBy: {
         name: "asc",
       },
     });
 
-    return {
-      docs: result,
-      totalDocs: result.length,
-      limit: limit,
-      totalPages,
-      page: page < 0 ? 1 : page,
-      hasPrevPage: page > 1 ? true : false,
-      hasNextPage: page < totalPages ? true : false,
-      prevPage: page - 1 > 0 ? (page - 1 >= totalPages ? totalPages : null) : null,
-      nextPage: page + 1 > totalPages ? null : page + 1,
-    };
+    return result;
   } catch (error) {
+    new AuditTrail("ListContact", "Contact", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
+    
     throw error;
   }
 }

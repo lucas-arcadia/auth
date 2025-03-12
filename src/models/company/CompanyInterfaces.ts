@@ -36,7 +36,7 @@ export interface IAddCompany {
 export interface IUpdateCompany {
   tokenPayload: ITokenPayload;
   ip: string;
-  companyId?: string;
+  id?: string;
   name?: string;
   surname?: string;
   active?: boolean;

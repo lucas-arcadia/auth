@@ -14,8 +14,8 @@ export async function UpdadeCompany(input: IUpdateCompany): Promise<Company> {
     });
 
     let companyId = input.tokenPayload.c;
-    if (input.companyId) {
-      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId;
+    if (input.id) {
+      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.id;
     }
 
     const company = await prisma.company.findUnique({

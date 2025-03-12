@@ -1,78 +1,39 @@
+import { User } from "@prisma/client";
+import { IGet } from "../../controllers/common/interfaces";
 import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma, prismaRead } from "../db";
-import { IListUser, IListUserQuery } from "./UserInterface";
 
-export async function ListUsers(input: IListUserQuery): Promise<IListUser> {
+export async function ListUsers(input: IGet): Promise<Partial<User>[]> {
   try {
     const permission = await checkPermission({
       tokenPayload: input.tokenPayload,
       service: Services.Company,
-      action: Actions.ListUsers,
+      action: Actions.ListUser,
       prisma,
     });
 
-    let whereClause: any = {};
-
+    let companyId = input.tokenPayload.c;
     if (input.companyId) {
-      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") {
-        if (input.companyId === "all") {
-          // If companyId is "all", we do not include the companyId condition in the where
-          whereClause.companyId = undefined;
-        } else {
-          whereClause.companyId = input.companyId;
-        }
-      } else {
-        whereClause.companyId = input.tokenPayload.c;
-      }
-    } else {
-      whereClause.companyId = input.tokenPayload.c;
+      if (permission.rule.name === "Administrator" || permission.rule.name === "Manager") companyId = input.companyId;
     }
 
-    let limit = Math.round(Number(input.limit)) || 10;
-    let page = Math.round(Number(input.page)) || 1;
-
-    if (limit <= 0) limit = 10;
-    if (page <= 0) page = 1;
-
-    const skip = page === 1 ? 0 : page * limit - limit || 0;
-
-    const totalPages = Math.ceil((await prismaRead.user.count()) / limit) || 0;
-
     const users = await prismaRead.user.findMany({
-      skip,
-      take: limit,
-      where: whereClause,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        active: true,
+      where: {
+        companyId: companyId,
+      },
+      omit: {
         attempts: true,
-        companyId: true,
-        ruleId: true,
+        hash: true,
+        readOnly: true,
         createdAt: true,
-        updatedAt: true,
-        Company: input.depth !== undefined ? true : false,
-        Rule: input.depth !== undefined ? true : false,
       },
       orderBy: {
         name: "asc",
       },
     });
 
-    return {
-      docs: users,
-      totalDocs: users.length,
-      limit: limit,
-      totalPages,
-      page: page < 0 ? 1 : page,
-      hasPrevPage: page > 1 ? true : false,
-      hasNextPage: page < totalPages ? true : false,
-      prevPage: page - 1 > 0 ? (page - 1 >= totalPages ? totalPages : null) : null,
-      nextPage: page + 1 > totalPages ? null : page + 1,
-    };
+    return users;
   } catch (error) {
     new AuditTrail("ListUser", "User", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
 

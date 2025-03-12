@@ -4,7 +4,7 @@ import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
 
-export async function ListCompanies(input: IGet): Promise<Company[]> {
+export async function ListCompanies(input: IGet): Promise<Partial<Company>[]> {
   try {
     await checkPermission({
       tokenPayload: input.tokenPayload,
@@ -14,6 +14,10 @@ export async function ListCompanies(input: IGet): Promise<Company[]> {
     });
 
     const result = await prisma.company.findMany({
+      omit: {
+        createdAt: true,
+        readOnly: true,
+      },
       orderBy: {
         name: "asc",
       },

@@ -71,6 +71,14 @@ app.use(
 
 // app.use(rateLimit())
 
+// Home
+app.get("/", () => {
+  return {
+    message: "User Service API",
+    version: "1.0.51",
+  };
+});
+
 // Companies
 new AddCompanyController(app);
 new GetCompanyController(app);

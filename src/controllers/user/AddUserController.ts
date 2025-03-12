@@ -31,11 +31,9 @@ export default class AddUserController {
         async ({ body, ip, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            const { name, email, phone, password, companyId, ruleId } = body as IAddUser;
-
+            const { name, email, phone, password, companyId } = body as IAddUser;
             set.status = 201;
-            return await AddUser({ tokenPayload, name, email, phone, password, companyId, ruleId, ip });
+            return await AddUser({ tokenPayload, name, email, phone, password, companyId, ip });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -65,8 +63,7 @@ export default class AddUserController {
             email: t.String(),
             phone: t.String(),
             password: t.String(),
-            companyId: t.String(),
-            ruleId: t.String(),
+            companyId: t.Optional(t.String()),
           }),
 
           response: {

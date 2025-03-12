@@ -1,8 +1,10 @@
+import { Contact } from "@prisma/client";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
-import { IAddContact, IContact } from "./ContactInterfaces";
+import { IAddContact } from "./ContactInterfaces";
+import { AuditTrail } from "../../libs/audit";
 
-export async function AddContact(input: IAddContact): Promise<IContact> {
+export async function AddContact(input: IAddContact): Promise<Contact> {
   try {
     const permission = await checkPermission({
       tokenPayload: input.tokenPayload,
@@ -37,6 +39,8 @@ export async function AddContact(input: IAddContact): Promise<IContact> {
     })
 
   } catch (error) {
+    new AuditTrail("AddContact", "Contact", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
+    
     throw error;
   }
 }

@@ -24,6 +24,7 @@ export default class LoginController {
             };
           } catch (error: any) {
             if (error.message.includes("Unauthorized")) set.status = 401;
+            else if (error.message.includes("Unprocessable Entity")) set.status = 422;
             else set.status = 500;
 
             return {
@@ -47,6 +48,7 @@ export default class LoginController {
           response: {
             200: t.Object({ token: t.String() }, { description: "Success" }),
             401: ElysiaResponse[401],
+            422: ElysiaResponse[422],
             500: ElysiaResponse[500],
           },
         }

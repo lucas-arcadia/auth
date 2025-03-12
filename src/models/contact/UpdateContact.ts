@@ -1,8 +1,10 @@
+import { Contact } from "@prisma/client";
+import { AuditTrail } from "../../libs/audit";
 import { Actions, Services, checkPermission } from "../../libs/permisstions";
 import { prisma } from "../db";
-import { IContact, IUpdateContact } from "./ContactInterfaces";
+import { IUpdateContact } from "./ContactInterfaces";
 
-export async function UpdadeContact(input: IUpdateContact): Promise<IContact> {
+export async function UpdadeContact(input: IUpdateContact): Promise<Contact> {
   try {
     const permission = await checkPermission({
       tokenPayload: input.tokenPayload,
@@ -17,10 +19,7 @@ export async function UpdadeContact(input: IUpdateContact): Promise<IContact> {
     }
 
     const contact = await prisma.contact.findUnique({
-      where: {
-        id: input.id,
-        companyId: input.companyId,
-      },
+      where: { id: input.id, companyId: input.companyId },
     });
     if (!contact) throw new Error("Contact not found");
 
@@ -33,18 +32,20 @@ export async function UpdadeContact(input: IUpdateContact): Promise<IContact> {
 
     if (hasChange) {
       return await prisma.contact.update({
-        where: { id: input.id },
+        where: { id: input.id, companyId: companyId },
         data: {
           name: input.name || contact.name,
           email: input.email || contact.email,
           phone: input.phone || contact.phone,
-          active: input.active || contact.active,
-        }
+          active: input.active !== undefined ? input.active : contact.active,
+        },
       });
     } else {
       return contact;
     }
   } catch (error) {
+    new AuditTrail("UpdateContact", "Contact", `error: ${error}`, input.tokenPayload.u, JSON.stringify(error), input.ip);
+
     throw error;
   }
 }

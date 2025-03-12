@@ -26,8 +26,7 @@ export interface IAddUser {
   name: string;
   password: string;
   phone: string;
-  companyId: string;
-  ruleId: string;
+  companyId?: string;
 }
 
 export interface IGetUser {
@@ -69,7 +68,6 @@ export interface IUpdateUser {
   name?: string;
   phone?: string;
   active?: boolean;
-  attempts?: number;
   ruleId?: string;
   password?: string;
 }

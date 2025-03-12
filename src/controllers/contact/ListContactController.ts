@@ -6,6 +6,11 @@ import { ElysiaHeader, ElysiaPaginationReturn, ElysiaQuery, ElysiaResponse } fro
 export default class ListContactController {
   constructor(readonly server: Elysia) {
     server
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -24,12 +29,10 @@ export default class ListContactController {
 
       .get(
         "/contact/list",
-        async ({ query: { companyId, depth, limit, page }, set, tokenPayload }) => {
+        async ({ tokenPayload, ip, query: { companyId, depth }, set }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            set.status = 200;
-            return await ListContact({ tokenPayload, companyId, depth, limit, page });
+            return await ListContact({ tokenPayload, ip, companyId, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -42,12 +45,10 @@ export default class ListContactController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
-            tags: ["Contato"],
-            summary: "Listar",
-            description: "Lista os contatos de uma empresa.",
+            tags: ["Contact"],
+            summary: "List Contacts",
+            description: "List the contacts of a company.",
             operationId: "ListContact",
           },
 
@@ -58,26 +59,21 @@ export default class ListContactController {
           query: t.Object({
             companyId: ElysiaQuery.companyId,
             depth: ElysiaQuery.depth,
-            limit: ElysiaQuery.limit,
-            page: ElysiaQuery.page,
           }),
 
           response: {
-            200: t.Object({
-              docs: t.Array(
-                t.Object({
-                  id: t.String(),
-                  name: t.String(),
-                  email: t.String(),
-                  phone: t.String(),
-                  active: t.Boolean(),
-                  createdAt: t.Date(),
-                  updatedAt: t.Date(),
-                  Company: t.Optional(t.Any()),
-                })
-              ),
-              ...ElysiaPaginationReturn,
-            }),
+            200: t.Array(
+              t.Object({
+                id: t.Optional(t.String()),
+                name: t.Optional(t.String()),
+                email: t.Optional(t.String()),
+                phone: t.Optional(t.String()),
+                active: t.Optional(t.Boolean()),
+                createdAt: t.Optional(t.Date()),
+                updatedAt: t.Optional(t.Date()),
+              }),
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

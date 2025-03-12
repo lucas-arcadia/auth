@@ -6,6 +6,11 @@ import { ElysiaHeader, ElysiaQuery, ElysiaResponse } from "../common/common";
 export default class GetContactController {
   constructor(readonly server: Elysia) {
     server
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -24,12 +29,10 @@ export default class GetContactController {
 
       .get(
         "/contact/:id",
-        async ({ params: { id }, query: { companyId, depth }, set, tokenPayload }) => {
+        async ({ tokenPayload, ip, params: { id }, query: { companyId, depth }, set }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            set.status = 200;
-            return await GetContact({ tokenPayload, id, companyId, depth });
+            return await GetContact({ tokenPayload, ip, id, companyId, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -42,12 +45,10 @@ export default class GetContactController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
-            tags: ["Contato"],
-            summary: "Obter",
-            description: "Obtém os dados de um contato.",
+            tags: ["Contact"],
+            summary: "Get Contact",
+            description: "Get the data of a contact.",
             operationId: "GetContact",
           },
 
@@ -61,21 +62,24 @@ export default class GetContactController {
           }),
 
           params: t.Object({
-            id: t.String({ description: "ID do contato" }),
+            id: t.String({ description: "Contact ID" }),
           }),
 
           response: {
-            200: t.Object({
-              id: t.String(),
-              name: t.String(),
-              email: t.String(),
-              phone: t.String(),
-              active: t.Boolean(),
-              companyId: t.String(),
-              createdAt: t.Date(),
-              updatedAt: t.Date(),
-              Company: t.Optional(t.Any()),
-            }),
+            200: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                email: t.String(),
+                phone: t.String(),
+                active: t.Boolean(),
+                companyId: t.String(),
+                createdAt: t.Date(),
+                updatedAt: t.Date(),
+                Company: t.Optional(t.Any()),
+              },
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],

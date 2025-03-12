@@ -49,7 +49,7 @@ export default class AddCompanyController {
         },
         {
           detail: {
-            tags: ["Companies"],
+            tags: ["Company"],
             summary: "Add Company",
             description: "Add a new company to the system.",
             operationId: "AddCompany",

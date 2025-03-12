@@ -29,10 +29,10 @@ export default class GetCompanyController {
 
       .get(
         "/company/:id",
-        async ({ ip, params: { id }, set, tokenPayload }) => {
+        async ({ ip, params: { id }, query: { depth }, set, tokenPayload }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-            return await GetCompany({ tokenPayload, ip, id });
+            return await GetCompany({ tokenPayload, ip, id, depth });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -46,7 +46,7 @@ export default class GetCompanyController {
         },
         {
           detail: {
-            tags: ["Companies"],
+            tags: ["Company"],
             summary: "Get Company",
             description: "Get the data of a company.",
             operationId: "GetCompany",
@@ -60,6 +60,10 @@ export default class GetCompanyController {
             id: t.String({ description: "Company ID", error: JSON.stringify({ message: "The company ID is required" }) }),
           }),
 
+          query: t.Object({
+            depth: t.Optional(t.String({ description: "Depth" })),
+          }),
+
           response: {
             200: t.Object(
               {
@@ -71,6 +75,8 @@ export default class GetCompanyController {
                 readOnly: t.Optional(t.Boolean()),
                 createdAt: t.Optional(t.Date()),
                 updatedAt: t.Optional(t.Date()),
+                User: t.Optional(t.Any()),
+                Contact: t.Optional(t.Any()),
               },
               { description: "Success" }
             ),

@@ -7,6 +7,11 @@ import { ElysiaHeader, ElysiaResponse } from "../common/common";
 export default class UpdadeContactController {
   constructor(readonly server: Elysia) {
     server
+      .derive(({ request }) => {
+        const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
+        return { ip: clientIp };
+      })
+
       .derive(async ({ headers }) => {
         try {
           const auth = headers["authorization"];
@@ -24,14 +29,12 @@ export default class UpdadeContactController {
       })
 
       .patch(
-        "/contact/:id",
-        async ({ body, params: { id }, set, tokenPayload }) => {
+        "/contact",
+        async ({ tokenPayload, ip, body, set }) => {
           try {
             if (!tokenPayload) throw new Error("Unauthorized");
-
-            const { name, email, phone, active } = body as IUpdateContact;
-
-            return await UpdadeContact({ tokenPayload, id, name, email, phone, active });
+            const { id, name, email, phone, active } = body as IUpdateContact;
+            return await UpdadeContact({ tokenPayload, ip, id, name, email, phone, active });
           } catch (error: any) {
             if (error.message.startsWith("Unauthorized")) set.status = 401;
             else if (error.message.startsWith("Forbidden")) set.status = 403;
@@ -44,12 +47,10 @@ export default class UpdadeContactController {
           }
         },
         {
-          type: "application/json",
-
           detail: {
-            tags: ["Contato"],
-            summary: "Atualizar ",
-            description: "Atualiza os dados de um contato",
+            tags: ["Contact"],
+            summary: "Update Contact",
+            description: "Update the data of a contact",
             operationId: "UpdateContact",
           },
 
@@ -57,11 +58,8 @@ export default class UpdadeContactController {
             authorization: ElysiaHeader.authorization,
           }),
 
-          params: t.Object({
-            id: t.String({ description: "ID do contato" }),
-          }),
-
           body: t.Object({
+            id: t.String({ description: "Contact ID" }),
             name: t.Optional(t.String()),
             email: t.Optional(t.String()),
             phone: t.Optional(t.String()),
@@ -69,18 +67,21 @@ export default class UpdadeContactController {
           }),
 
           response: {
-            200: t.Object({
-              id: t.String(),
-              name: t.String(),
-              email: t.String(),
-              phone: t.String(),
-              active: t.Boolean()
-            }),
+            200: t.Object(
+              {
+                id: t.String(),
+                name: t.String(),
+                email: t.String(),
+                phone: t.String(),
+                active: t.Boolean(),
+              },
+              { description: "Success" }
+            ),
             401: ElysiaResponse[401],
             403: ElysiaResponse[403],
             404: ElysiaResponse[404],
             500: ElysiaResponse[500],
-          }
+          },
         }
       );
   }
