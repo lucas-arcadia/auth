@@ -1,25 +1,44 @@
+import { Elysia } from "elysia";
 import { SignJWT } from "jose";
 import User from "../models/User";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.SECRET_KEY as string);
 
-export const login = async (req: any, res: any) => {
-  try {
-    const { email, password } = req.body;
+export const authController = new Elysia()
+  .post("/login", async ({ body }) => {
+    /*
+      Login
+      - Check if user exists
+      - Check if password is correct
+      - Check if account is locked
+      - Generate token
+      - Return token
+    */
+
+    const { email, password } = body as { email: string; password: string };
 
     const user = await User.findOne({ email }).populate("company");
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return new Response(JSON.stringify({ message: "Invalid credentials" }), {
+        status: 401,
+      });
     }
 
-    const isValidPassword = await Bun.password.verify(password, user.password)
+    if (user.failedLoginAttempts >= 5) {
+      return new Response(JSON.stringify({ message: "Account locked" }), {
+        status: 403,
+      });
+    }
+
+    const isValidPassword = await Bun.password.verify(password, user.password);
     if (!isValidPassword) {
       user.failedLoginAttempts += 1;
       await user.save();
-      return res.status(401).json({ message: "Invalid credentials" });
-    } 
+      return new Response(JSON.stringify({ message: "Invalid credentials" }), {
+        status: 401,
+      });
+    }
 
-    // Reset failed attempts on successful login
     user.failedLoginAttempts = 0;
     await user.save();
 
@@ -30,22 +49,36 @@ export const login = async (req: any, res: any) => {
       permissions: user.permissions,
     })
       .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime("1h")
+      .setExpirationTime("15m")
       .sign(SECRET_KEY);
 
-    res.json({ token });
-      
-  } catch (error) {
-    console.error("Login failed:", error);
-    res.status(500).json({ message: "Login failed" });
-  }
-};
+    return { token };
+  })
 
-export const register = async (req: any, res: any) => {
-  try {
-    const { name, email, phone, password, companyId, permissions } = req.body;
+  /*
+    Register
+    - Check if user exists
+    - Check if password is correct
+    - Check if account is locked
+    - Generate token
+    - Return token
+  */
 
-    const hashedPassword = await Bun.password.hash(password);
+  .post("/register", async ({ body }) => {
+    const { name, email, phone, password, companyId, permissions } = body as {
+      name: string;
+      email: string;
+      phone: string;
+      password: string;
+      companyId: string;
+      permissions: string[];
+    };
+
+    const hashedPassword = await Bun.password.hash(password, {
+      algorithm: "bcrypt",
+      cost: 10,
+    });
+
     const user = new User({
       name,
       email,
@@ -54,12 +87,12 @@ export const register = async (req: any, res: any) => {
       company: companyId,
       permissions,
     });
-    
-    await user.save();
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (error) {
-    console.error("Registration failed:", error);
-    res.status(400).json({ message: "Registration failed" });
-  }
-};
 
+    await user.save();
+    return new Response(
+      JSON.stringify({ message: "User created successfully" }),
+      {
+        status: 201,
+      }
+    );
+  });
