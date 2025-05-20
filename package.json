@@ -1,28 +1,15 @@
 {
-  "name": "user-service",
-  "version": "1.0.51",
-  "prisma": {
-    "seed": "bun prisma/seed.ts"
-  },
+  "name": "csi-auth-api",
+  "version": "1.0.50",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
-    "start": "bun src/index.ts"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "@elysiajs/cors": "^1.2.0",
-    "@elysiajs/swagger": "^1.2.2",
-    "elysia": "^1.2.25",
-    "elysia-compress": "^1.2.1",
-    "elysia-rate-limit": "^4.2.1",
-    "jose": "^6.0.10",
-    "mongoose": "^8.12.1"
+    "elysia": "latest"
   },
   "devDependencies": {
-    "bun-types": "^1.2.5"
+    "bun-types": "latest"
   },
-  "module": "src/index.ts",
-  "type": "module",
-  "peerDependencies": {
-    "typescript": "^5.8.2"
-  }
+  "module": "src/index.js"
 }
