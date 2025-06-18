@@ -1,9 +1,10 @@
 // /src/utils/validation.ts
 
-import db from "../config/database";
+// import db from "../config/database";
+import { PrismaClient } from "../../generated/prisma";
 import { Company } from "../models/company.model";
-import { Group } from "../models/group.model";
-import { User } from "../models/user.model";
+import { Role } from "../models/role.model";
+import { IUser } from "../models/user.model";
 
 export interface ValidationError {
   field: string;
@@ -23,10 +24,16 @@ export function validateLoginFields(email: string, password: string): Validation
   return errors;
 }
 
-export function validateCompany(companyId: number): Company {
+export async function validateCompany(companyId: string): Promise<Company> {
   try {
-    const stmt = db.prepare("SELECT * FROM company WHERE id = ?");
-    const company = stmt.get(companyId) as Company | null;
+    // Usar o prisma ao invés do sqlite
+    const prisma = new PrismaClient();
+    const company = await prisma.company.findUnique({
+      where: {
+        id: companyId,
+      },
+    });
+
     if (!company) {
       throw new Error("Company not found", { cause: { type: "not_found" } });
     }
@@ -67,10 +74,16 @@ export function validateCompanyFields(name: string, surname: string, ein?: strin
   return errors;
 }
 
-export function validateGroup(groupId: number, companyId: number): Group {
+export  async function validateRole(groupId: number, companyId: string): Promise<Role> {
   try {
-    const stmt = db.prepare("SELECT * FROM groups WHERE id = ? AND companyId = ?");
-    const group = stmt.get(groupId, companyId) as Group | null;
+    const prisma = new PrismaClient();
+    const group = await prisma.role.findUnique({
+      where: {
+        id: groupId.toString(),
+        companyId: companyId.toString(),
+      },
+    });
+    
     if (!group) {
       throw new Error("Group not found", {
         cause: { type: "not_found" },
@@ -88,7 +101,7 @@ export function validateGroup(groupId: number, companyId: number): Group {
   }
 }
 
-export function validateGroupFields(name?: string, companyId?: number): ValidationError[] {
+export function validateRoleFields(name?: string, companyId?: number): ValidationError[] {
   const errors: ValidationError[] = [];
 
   if (name && name.length > 50) {
@@ -104,17 +117,22 @@ export function validateGroupFields(name?: string, companyId?: number): Validati
   return errors;
 }
 
-export function validateUser(userId: number, companyId: number, groupId?: number): User {
+export async function validateUser(userId: string, companyId: string, ruleId?: string): Promise<IUser> {
   try {
-    const whereClause = groupId ? "WHERE id = ? AND companyId = ? AND groupId = ?" : "WHERE id = ? AND companyId = ?";  
-    const stmt = db.prepare(`SELECT * FROM users ${whereClause}`);
+    const prisma = new PrismaClient();
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+        companyId,
+        Role: {
+          some: {
+            id: ruleId,
+          },
+        },
+      },
+    });
     
-    let user: User | null;
-    if (groupId) {
-      user = stmt.get(userId, companyId, groupId) as User | null;
-    } else {
-      user = stmt.get(userId, companyId) as User | null;
-    }
     if (!user) {
       throw new Error("User not found", { cause: { type: "not_found" } });
     }
