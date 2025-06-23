@@ -26,11 +26,13 @@ export class AuthModel {
         },
       });
       if (!user) {
+        console.log("User not found", email);
         throw new Error("Invalid credentials", { cause: { type: "not_found" } });
       }
 
       const isPasswordValid = await Bun.password.verify(password, user.password, "bcrypt");
       if (!isPasswordValid) {
+        console.log("Invalid password", email);
         throw new Error("Invalid credentials", { cause: { type: "invalid_password" } });
       }
 
@@ -40,6 +42,7 @@ export class AuthModel {
         ein: user.Company.ein,
       };
     } catch (error) {
+      console.log("Error", error);
       throw error;
     }
   }

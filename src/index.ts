@@ -7,7 +7,7 @@ import { authController } from "./controllers/auth.controller";
 import { companyController } from "./controllers/company.controller";
 import { roleController } from "./controllers/role.controller";
 import { userController } from "./controllers/user.controller";
-import { authPlugin } from "./plugins/authPlugin";
+import { tokenController } from "./controllers/token.controller";
 
 const app = new Elysia();
 
@@ -38,6 +38,7 @@ app.use(authController);
 app.use(companyController);
 app.use(roleController);
 app.use(userController);
+app.use(tokenController);
 
 app.onError(({ error, code, set }) => {
   let errorMessage = "";
