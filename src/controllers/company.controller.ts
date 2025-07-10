@@ -1,4 +1,4 @@
-// /src/controllers/company.controller.ts
+// csi-auth-api/src/controllers/complaint.controller.ts
 
 import { Elysia, t } from "elysia";
 import { CompanyModel } from "../models/company.model";

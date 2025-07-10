@@ -92,7 +92,7 @@ try {
   const roleComplaintAdmin = await prisma.role.create({
     data: {
       companyId: companyRBM.id,
-      name: "Complaint Admin",
+      name: "Administrador Canal Denúncias",
       description: "Gerencia a infraestrutura técnica e a segurança do canal de denúncias.",
       roles: {
         // System
@@ -129,7 +129,7 @@ try {
   const roleComplaintSupervisor = await prisma.role.create({
     data: {
       companyId: companyRBM.id,
-      name: "Complaint Supervisor",
+      name: "Supervisor Canal Denúncias",
       description: "Responsável por supervisionar os tratadores, tomar decisões em casos escalados e garantir que o processo siga as políticas da empresa e a legislação.",
       roles: {
         // Herdadas do Denunciante
@@ -162,7 +162,7 @@ try {
           id: roleComplaintSupervisor.id,
         },
       },
-      name: "Supervisor do Canal de Denúncias",
+      name: "Supervisor",
       email: "ouvidoria.supervisor@rbmmetais.com.br",
       phone: "+551124500010",
       password: await Bun.password.hash("12345678", { algorithm: "bcrypt", cost: 10 }),
@@ -172,7 +172,7 @@ try {
   const roleComplaintTratador = await prisma.role.create({
     data: {
       companyId: companyRBM.id,
-      name: "Tratador de Denúncias",
+      name: "Tratador Canal Denúncias",
       description: "Profissional capacitado para receber, analisar e tratar denúncias de assédio. Deve ter treinamento específico em questões de assédio moral e sexual para garantir sensibilidade e imparcialidade.",
       roles: {
         // Herdadas do Denunciante
@@ -208,7 +208,7 @@ try {
   const roleComplaintAuditor = await prisma.role.create({
     data: {
       companyId: companyRBM.id,
-      name: "Auditor de Denúncias",
+      name: "Auditor Canal Denúncias",
       description: "Responsável por auditar o processo de tratamento de denúncias, garantindo conformidade com leis trabalhistas, LGPD e políticas internas da empresa.",
       roles: {
         // Herdadas do Denunciante
@@ -256,7 +256,7 @@ try {
   const roleComplaintComiteDeEtica = await prisma.role.create({
     data: {
       companyId: companyRBM.id,
-      name: "Comitê de Ética ou Compliance",
+      name: "Comitê de Ética Canal Denúncias",
       description: "Grupo que delibera sobre denúncias graves ou estratégicas, como assédio sexual envolvendo a alta gestão.",
       roles: {
         // Herdadas do Denunciante
@@ -297,7 +297,7 @@ try {
           id: roleComplaintComiteDeEtica.id,
         },
       },
-      name: "Comitê de Ética ou Compliance",
+      name: "Comitê de Ética",
       email: "ouvidoria.comite@rbmmetais.com.br",
       phone: "+551124500010",
       password: await Bun.password.hash("12345678", { algorithm: "bcrypt", cost: 10 }),
@@ -307,7 +307,7 @@ try {
   const roleComplaintOuvidorIndependente = await prisma.role.create({
     data: {
       companyId: companyRBM.id,
-      name: "Ouvidor Independente",
+      name: "Ouvidor Independente Canal Denúncias",
       description: "Ator externo ou interno com independência para atuar como última instância em denúncias não resolvidas ou mal tratadas.",
       roles: {
         // Herdadas do Denunciante
