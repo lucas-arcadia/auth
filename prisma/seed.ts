@@ -83,6 +83,7 @@ try {
   // Company RBM - RECUPERADORA BRASILEIRA DE METAIS S/A
   const companyRBM = await prisma.company.create({
     data: {
+      id: "0197312c-2634-76a1-9e82-046f2949cb75",
       name: "RBM - RECUPERADORA BRASILEIRA DE METAIS S/A",
       surname: "RBM",
       ein: "12698756000135",
