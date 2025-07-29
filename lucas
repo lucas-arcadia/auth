@@ -1,0 +1,10 @@
+# Database
+DATABASE_URL="mysql://csi_dev:csi_dev_password_123@localhost:3306/csi_auth_dev"
+SHADOW_DATABASE_URL="mysql://csi_dev:csi_dev_password_123@localhost:3306/csi_auth_dev_shadow"
+
+# JWT
+JWT_SECRET="csi_auth_jwt_secret_key_super_secure_2024"
+
+# Application
+NODE_ENV="development"
+APP_PORT=3000
