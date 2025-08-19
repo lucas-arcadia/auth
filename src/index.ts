@@ -75,6 +75,6 @@ app.onError(({ error, code, set }) => {
   };
 });
 
-app.listen(3000);
+app.listen(80);
 
 console.log(`🦊 Serviço CSI Auth API rodando em ${app.server?.hostname}:${app.server?.port}`);
