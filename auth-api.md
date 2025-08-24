@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS users (
 |Item|Progresso||
 |-|-|-|
 | Estrutura do Banco de Dados | <meter value="100" min="0" max="100" low="30" high="95" optimum="100"></meter>| 100% |
-| Gerenciamento de Empresas | <meter value="70" min="0" max="100" low="30" high="95" optimum="100"></meter>| 70% |
+| Gerenciamento de Empresas | <meter value="70" min="0" max="100" low="30" high="95" optimum="100"></meter>| 100% |
 | Gerenciamento de Grupos | <meter value="70" min="0" max="100" low="30" high="95" optimum="100"></meter>| 70% |
 | Gerenciamento de Usuários | <meter value="50" min="0" max="100" low="30" high="95" optimum="100"></meter>| 50% |
 | Endpoints | <meter value="60" min="0" max="100" low="30" high="95" optimum="100"></meter>| 60% |
