@@ -1,4 +1,5 @@
 import prisma from "../config/database";
+import { userHasPermission } from "../utils/permissions";
 
 export interface ILogin {
   userId: string;
@@ -7,8 +8,13 @@ export interface ILogin {
 }
 
 export class AuthModel {
-  static async login(email: string, password: string): Promise<ILogin> {
+  static async login(email: string, password: string, system: string): Promise<ILogin> {
     try {
+      // Verificar se o sistema foi fornecido
+      if (!system) {
+        throw new Error("not_authorized", { cause: { type: "not_authorized", statusCode: 401 } });
+      }
+
       const user = await prisma.user.findUnique({
         where: {
           email,
@@ -26,14 +32,18 @@ export class AuthModel {
         },
       });
       if (!user) {
-        console.log("User not found", email);
         throw new Error("Invalid credentials", { cause: { type: "not_found" } });
       }
 
       const isPasswordValid = await Bun.password.verify(password, user.password, "bcrypt");
       if (!isPasswordValid) {
-        console.log("Invalid password", email);
         throw new Error("Invalid credentials", { cause: { type: "invalid_password" } });
+      }
+
+      // Verificar permissão específica do sistema (agora obrigatório)
+      const hasPermission = await userHasPermission(user.id, `login_${system}`);
+      if (!hasPermission) {
+        throw new Error("not_authorized", { cause: { type: "not_authorized", statusCode: 401 } });
       }
 
       return {
@@ -42,7 +52,6 @@ export class AuthModel {
         ein: user.Company.ein,
       };
     } catch (error) {
-      console.log("Error", error);
       throw error;
     }
   }

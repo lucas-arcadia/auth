@@ -28,9 +28,21 @@ export const authController = (app: Elysia) => {
       // Login
       .post(
         "/login",
-        async ({ body: { email, password }, jwt, set, request }) => {
+        async ({ body: { email, password, system }, jwt, set, request }) => {
           try {
-            const login = (await AuthModel.login(email, password)) as ILogin;
+            // Detectar automaticamente o sistema ombudsman baseado no valor específico
+            let targetSystem = system;
+            if (system === "lUcWEnp6rjlzZhSSqiArLfP6Nk7XOw8a") {
+              targetSystem = "ombudsman";
+            } else if (system === "xCkdRGV3MCFSsH7vTcisC3TIuKcHmdSU") {
+              targetSystem = "csidesk";
+            } else if (system === "1GHgUdCIX0WS4Ynx0vUIpvlAWQJzC4GT") {
+              targetSystem = "csipanel";
+            } else if (system === "flZMQefy8q0KTiMiMCjeyVDgDGY45arj") {
+              targetSystem = "csiconnect";
+            }
+
+            const login = (await AuthModel.login(email, password, targetSystem)) as ILogin;
 
             return {
               token: await jwt.sign({
@@ -46,7 +58,7 @@ export const authController = (app: Elysia) => {
                 return {
                   error: {
                     code: 401,
-                    message: "Invalid credentials",
+                    message: "Credenciais Inválidas",
                   },
                 };
 
@@ -55,7 +67,16 @@ export const authController = (app: Elysia) => {
                 return {
                   error: {
                     code: 401,
-                    message: "Invalid credentials",
+                    message: "Credenciais Inválidas",
+                  },
+                };
+
+              case "not_authorized":
+                set.status = 401;
+                return {
+                  error: {
+                    code: 401,
+                    message: "Não Autorizado",
                   },
                 };
             }
@@ -78,6 +99,7 @@ export const authController = (app: Elysia) => {
           body: t.Object({
             email: t.String({ format: "email", error: "Invalid email address" }),
             password: t.String({ minLength: 8, error: "Password must be at least 8 characters long" }),
+            system: t.String({ description: "System identifier (e.g., 'ombudsman', 'csidesk', 'csipanel')" }),
           }),
           response: {
             200: t.Ref("token"),
