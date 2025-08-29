@@ -23,33 +23,29 @@ model Company {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  Role      Role[]
-  User      User[]
+
+  System System[]
+  User   User[]
 
   @@unique([ein])
 }
 
-model Role {
+model System {
   id          String    @id @default(uuid(7)) @db.Char(36)
-  Company     Company   @relation(fields: [companyId], references: [id])
-  companyId   String
-  User        User[]
   name        String    @db.VarChar(255)
   description String    @db.Text
-  roles       Json
-  notes       Json
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
-  @@unique([name, companyId])
+  Company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+
+  @@unique([name])
 }
 
 model User {
   id        String    @id @default(uuid(7)) @db.Char(36)
-  Company   Company   @relation(fields: [companyId], references: [id])
-  companyId String
-  Role      Role[]
   name      String    @db.VarChar(255)
   email     String    @db.VarChar(255)
   phone     String?   @db.VarChar(20)
@@ -58,5 +54,38 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
+  Company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+
+  Role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
+
   @@unique([email])
+}
+
+model Role {
+  id          String    @id @default(uuid(7)) @db.Char(36)
+  name        String    @db.VarChar(255)
+  description String    @db.Text
+  roles       Json
+  notes       Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  User   User[]
+  Policy Policy[]
+}
+
+model Policy {
+  id          String    @id @default(uuid(7)) @db.Char(36)
+  name        String    @db.VarChar(255)
+  description String    @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  Role Role[]
+
+  @@unique([name])
 }
