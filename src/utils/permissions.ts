@@ -15,7 +15,11 @@ export async function userHasPermission(userId: string, permission: string): Pro
       select: {
         Role: {
           select: {
-            roles: true,
+            Policy: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
       },
@@ -25,12 +29,10 @@ export async function userHasPermission(userId: string, permission: string): Pro
       throw new Error("User not found", { cause: { type: "not_found" } });
     }
 
-    // Verifica se pelo menos um dos roles do usuário tem a permissão
-    for (const role of user.Role) {
-      const permissions = role.roles as Record<string, boolean>;
-      if (permissions && permissions[permission] === true) {
-        return true
-      }
+    const permissionsString = user.Role.Policy[0]?.name || '';
+    const permissions = permissionsString.split(',').map(p => p.trim());
+    if (permissions.includes(permission)) {
+      return true;
     }
 
     return false;
@@ -54,7 +56,11 @@ export async function getUserPermissions(userId: string): Promise<Record<string,
       include: {
         Role: {
           select: {
-            roles: true,
+            Policy: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
       },
@@ -67,18 +73,14 @@ export async function getUserPermissions(userId: string): Promise<Record<string,
     // Combina todas as permissões de todos os roles do usuário
     const combinedPermissions: Record<string, boolean> = {};
     
-    for (const role of user.Role) {
-      const permissions = role.roles as Record<string, boolean>;
-      if (permissions) {
-        Object.keys(permissions).forEach(permission => {
-          // Se algum role tem a permissão como true, o usuário tem a permissão
-          if (permissions[permission] === true) {
-            combinedPermissions[permission] = true;
-          } else if (combinedPermissions[permission] === undefined) {
-            combinedPermissions[permission] = false;
-          }
-        });
-      }
+    const permissionsString = user.Role.Policy[0]?.name || '';
+    const permissions = permissionsString.split(',').map(p => p.trim());
+    if (permissions.length > 0) {
+      permissions.forEach(permission => {
+        if (permission) {
+          combinedPermissions[permission] = true;
+        }
+      });
     }
 
     return combinedPermissions;
@@ -117,7 +119,11 @@ export async function getPermissions(roleId: string): Promise<Record<string, boo
         id: roleId,
       },
       select: {
-        roles: true,
+        Policy: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
@@ -125,7 +131,15 @@ export async function getPermissions(roleId: string): Promise<Record<string, boo
       throw new Error("Role not found", { cause: { type: "not_found" } });
     }
 
-    return (role.roles as Record<string, boolean>) || {};
+    const permissionsString = role.Policy[0]?.name || '';
+    const permissions = permissionsString.split(',').map(p => p.trim());
+    const result: Record<string, boolean> = {};
+    permissions.forEach(permission => {
+      if (permission) {
+        result[permission] = true;
+      }
+    });
+    return result;
   } catch (error) {
     console.error("Error getting role permissions:", error);
     return {};

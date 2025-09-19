@@ -37,7 +37,6 @@ export const tokenController = (app: Elysia) => {
             };
           }
 
-          // Buscar usuário com roles e permissões
           const user = await prisma.user.findFirst({
             where: {
               id: String(payload.userId),
@@ -46,7 +45,9 @@ export const tokenController = (app: Elysia) => {
             include: {
               Company: true,
               Role: {
-                where: { deletedAt: null },
+                include: {
+                  Policy: true,
+                },
               },
             },
           });
@@ -59,15 +60,22 @@ export const tokenController = (app: Elysia) => {
             };
           }
 
-          // Consolidar permissões de todas as roles
+
           const permissions: Record<string, boolean> = {};
           const roleNames: string[] = [];
 
-          user.Role.forEach((role) => {
-            roleNames.push(role.name);
-            const rolePermissions = role.roles as Record<string, boolean>;
-            Object.assign(permissions, rolePermissions);
+          roleNames.push(user.Role.name);
+
+          user.Role.Policy.forEach((policy) => {
+            permissions[policy.name] = true;
+            
+            try {
+              const rolePermissions = JSON.parse(policy.name) as Record<string, boolean>;
+              Object.assign(permissions, rolePermissions);
+            } catch (error) {
+            }
           });
+
 
           return {
             success: true,
