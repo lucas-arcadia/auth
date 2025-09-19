@@ -67,13 +67,12 @@ export const tokenController = (app: Elysia) => {
           roleNames.push(user.Role.name);
 
           user.Role.Policy.forEach((policy) => {
-            permissions[policy.name] = true;
-            
-            try {
-              const rolePermissions = JSON.parse(policy.name) as Record<string, boolean>;
-              Object.assign(permissions, rolePermissions);
-            } catch (error) {
-            }
+            const policyPermissions = policy.name.split(',').map(p => p.trim());
+            policyPermissions.forEach(permission => {
+              if (permission) {
+                permissions[permission] = true;
+              }
+            });
           });
 
 

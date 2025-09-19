@@ -29,10 +29,13 @@ export async function userHasPermission(userId: string, permission: string): Pro
       throw new Error("User not found", { cause: { type: "not_found" } });
     }
 
-    const permissionsString = user.Role.Policy[0]?.name || '';
-    const permissions = permissionsString.split(',').map(p => p.trim());
-    if (permissions.includes(permission)) {
-      return true;
+    // Verificar todas as policies do role
+    for (const policy of user.Role.Policy) {
+      const permissionsString = policy.name || '';
+      const permissions = permissionsString.split(',').map(p => p.trim());
+      if (permissions.includes(permission)) {
+        return true;
+      }
     }
 
     return false;
@@ -73,9 +76,10 @@ export async function getUserPermissions(userId: string): Promise<Record<string,
     // Combina todas as permissões de todos os roles do usuário
     const combinedPermissions: Record<string, boolean> = {};
     
-    const permissionsString = user.Role.Policy[0]?.name || '';
-    const permissions = permissionsString.split(',').map(p => p.trim());
-    if (permissions.length > 0) {
+    // Verificar todas as policies do role
+    for (const policy of user.Role.Policy) {
+      const permissionsString = policy.name || '';
+      const permissions = permissionsString.split(',').map(p => p.trim());
       permissions.forEach(permission => {
         if (permission) {
           combinedPermissions[permission] = true;
@@ -131,14 +135,19 @@ export async function getPermissions(roleId: string): Promise<Record<string, boo
       throw new Error("Role not found", { cause: { type: "not_found" } });
     }
 
-    const permissionsString = role.Policy[0]?.name || '';
-    const permissions = permissionsString.split(',').map(p => p.trim());
     const result: Record<string, boolean> = {};
-    permissions.forEach(permission => {
-      if (permission) {
-        result[permission] = true;
-      }
-    });
+    
+    // Verificar todas as policies do role
+    for (const policy of role.Policy) {
+      const permissionsString = policy.name || '';
+      const permissions = permissionsString.split(',').map(p => p.trim());
+      permissions.forEach(permission => {
+        if (permission) {
+          result[permission] = true;
+        }
+      });
+    }
+    
     return result;
   } catch (error) {
     console.error("Error getting role permissions:", error);
