@@ -40,6 +40,8 @@ export const authController = (app: Elysia) => {
               targetSystem = "csipanel";
             } else if (system === "flZMQefy8q0KTiMiMCjeyVDgDGY45arj") {
               targetSystem = "csiconnect";
+            } else if (system === "x81X77WUwP257hZDmYwC5x7Q7jg6H2ZM") {
+              targetSystem = "rbmcustodia";
             }
 
             const login = (await AuthModel.login(email, password, targetSystem)) as ILogin;
@@ -99,7 +101,7 @@ export const authController = (app: Elysia) => {
           body: t.Object({
             email: t.String({ format: "email", error: "Invalid email address" }),
             password: t.String({ minLength: 8, error: "Password must be at least 8 characters long" }),
-            system: t.String({ description: "System identifier (e.g., 'ombudsman', 'csidesk', 'csipanel')" }),
+            system: t.String({ description: "System identifier (e.g., 'ombudsman', 'csidesk', 'csipanel', 'csiconnect', 'rbmcustodia')" }),
           }),
           response: {
             200: t.Ref("token"),
