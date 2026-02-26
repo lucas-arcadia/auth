@@ -76,6 +76,10 @@ export const tokenController = (app: Elysia) => {
           });
 
 
+          const age = user.birthdate
+            ? new Date().getFullYear() - new Date(user.birthdate).getFullYear()
+            : null;
+
           return {
             success: true,
             user: {
@@ -83,6 +87,7 @@ export const tokenController = (app: Elysia) => {
               companyId: user.companyId,
               name: user.name,
               email: user.email,
+              age,
               roles: roleNames,
               permissions,
             },
