@@ -5,16 +5,12 @@ export interface ILogin {
   userId: string;
   companyId: string;
   ein: string;
+  age: number | null;
 }
 
 export class AuthModel {
-  static async login(email: string, password: string, system: string): Promise<ILogin> {
+  static async login(email: string, password: string): Promise<ILogin> {
     try {
-      // Verificar se o sistema foi fornecido
-      if (!system) {
-        throw new Error("not_authorized", { cause: { type: "not_authorized", statusCode: 401 } });
-      }
-
       const user = await prisma.user.findUnique({
         where: {
           email,
@@ -40,16 +36,16 @@ export class AuthModel {
         throw new Error("Invalid credentials", { cause: { type: "invalid_password" } });
       }
 
-      // Verificar permissão específica do sistema (agora obrigatório)
-      const hasPermission = await userHasPermission(user.id, `login_${system}`);
-      if (!hasPermission) {
-        throw new Error("not_authorized", { cause: { type: "not_authorized", statusCode: 401 } });
-      }
+
+      const age = user.birthdate
+        ? new Date().getFullYear() - new Date(user.birthdate).getFullYear()
+        : null;
 
       return {
         userId: user.id,
         companyId: user.companyId,
         ein: user.Company.ein,
+        age,
       };
     } catch (error) {
       throw error;

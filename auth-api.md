@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   phone TEXT,
+  age INTEGER NOT NULL,
   companyId INTEGER NOT NULL,
   groupId INTEGER NOT NULL,
   password TEXT NOT NULL,

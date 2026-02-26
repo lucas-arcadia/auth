@@ -28,29 +28,16 @@ export const authController = (app: Elysia) => {
       // Login
       .post(
         "/login",
-        async ({ body: { email, password, system }, jwt, set, request }) => {
+        async ({ body: { email, password }, jwt, set, request }) => {
           try {
-            // Detectar automaticamente o sistema ombudsman baseado no valor específico
-            let targetSystem = system;
-            if (system === "lUcWEnp6rjlzZhSSqiArLfP6Nk7XOw8a") {
-              targetSystem = "ombudsman";
-            } else if (system === "xCkdRGV3MCFSsH7vTcisC3TIuKcHmdSU") {
-              targetSystem = "csidesk";
-            } else if (system === "1GHgUdCIX0WS4Ynx0vUIpvlAWQJzC4GT") {
-              targetSystem = "csipanel";
-            } else if (system === "flZMQefy8q0KTiMiMCjeyVDgDGY45arj") {
-              targetSystem = "csiconnect";
-            } else if (system === "x81X77WUwP257hZDmYwC5x7Q7jg6H2ZM") {
-              targetSystem = "rbmcustodia";
-            }
-
-            const login = (await AuthModel.login(email, password, targetSystem)) as ILogin;
+            const login = (await AuthModel.login(email, password)) as ILogin;
 
             return {
               token: await jwt.sign({
                 userId: login.userId,
                 companyId: login.companyId,
                 ein: login.ein,
+                age: String(login.age ?? ""),
               }),
             };
           } catch (error: any) {
@@ -101,7 +88,6 @@ export const authController = (app: Elysia) => {
           body: t.Object({
             email: t.String({ format: "email", error: "Invalid email address" }),
             password: t.String({ minLength: 8, error: "Password must be at least 8 characters long" }),
-            system: t.String({ description: "System identifier (e.g., 'ombudsman', 'csidesk', 'csipanel', 'csiconnect', 'rbmcustodia')" }),
           }),
           response: {
             200: t.Ref("token"),
@@ -125,10 +111,12 @@ export const authController = (app: Elysia) => {
               throw new Error("Invalid token", { cause: { type: "invalid_token" } });
             }
 
+            const ageValue = payload.age as string;
             return {
               userId: payload.userId as string,
               companyId: payload.companyId as string,
               ein: payload.ein as string,
+              age: ageValue ? Number(ageValue) : null,
             };
           } catch (error: any) {
             switch (error.cause.type) {
@@ -166,6 +154,7 @@ export const authController = (app: Elysia) => {
               userId: t.String(),
               companyId: t.String(),
               ein: t.String(),
+              age: t.Nullable(t.Number()),
             }),
             401: t.Object({
               error: t.Ref("error"),
