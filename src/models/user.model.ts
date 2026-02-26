@@ -7,6 +7,9 @@ export interface IUser {
   companyId: string;
   name: string;
   email: string;
+  birthday: string | null;
+  gender: string | null;
+  schoolYear: string | null;
   phone: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -29,6 +32,9 @@ export class UserModel {
         companyId: user.companyId,
         name: user.name,
         email: user.email,
+        birthday: user.birthdate,
+        gender: user.gender,
+        schoolYear: user.schoolYear,
         phone: user.phone,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
@@ -39,7 +45,16 @@ export class UserModel {
     }
   }
 
-  static async create(companyId: string, name: string, email: string, phone: string | null, password: string): Promise<IUser> {
+  static async create(
+    companyId: string,
+    name: string,
+    email: string,
+    phone: string | null,
+    password: string,
+    birthday: string | null,
+    gender: string | null,
+    schoolYear: string | null,
+  ): Promise<IUser> {
     try {
       const result = await prisma.user.create({
         data: {
@@ -47,6 +62,9 @@ export class UserModel {
           name,
           email,
           phone,
+          birthdate: birthday,
+          gender,
+          schoolYear,
           password: await Bun.password.hash(password, {
             algorithm: "bcrypt",
             cost: 10,
@@ -54,13 +72,25 @@ export class UserModel {
         },
       });
 
-      return result;
+      return {
+        id: result.id,
+        companyId: result.companyId,
+        name: result.name,
+        email: result.email,
+        birthday: result.birthdate,
+        gender: result.gender,
+        schoolYear: result.schoolYear,
+        phone: result.phone,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt,
+        deletedAt: result.deletedAt,
+      };
     } catch (error) {
       throw error;
     }
   }
 
-  static async getAll(companyId: string, offset: number = 0, limit: number = 10, search: string = "", sort: string = "id", order: string = "asc") {
+  static async getAll(companyId: string, offset: number = 0, limit: number = 10, search: string = "", sort: string = "id", order: string = "asc"): Promise<IUser[]> {
     try {
       if (limit < 1) {
         throw new Error("Limit must be greater than zero", {
@@ -74,7 +104,7 @@ export class UserModel {
         });
       }
 
-      const result = await prisma.user.findMany({
+      const results = await prisma.user.findMany({
         skip: offset,
         take: limit,
         where: {
@@ -88,7 +118,19 @@ export class UserModel {
         },
       });
 
-      return result;
+      return results.map((user) => ({
+        id: user.id,
+        companyId: user.companyId,
+        name: user.name,
+        email: user.email,
+        birthday: user.birthdate,
+        gender: user.gender,
+        schoolYear: user.schoolYear,
+        phone: user.phone,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        deletedAt: user.deletedAt,
+      }));
     } catch (error) {
       console.log("Error in UserModel.getAll", error);
 
@@ -105,6 +147,9 @@ export class UserModel {
           companyId: true,
           name: true,
           email: true,
+          birthdate: true,
+          gender: true,
+          schoolYear: true,
           phone: true,
           createdAt: true,
           updatedAt: true,
@@ -116,7 +161,19 @@ export class UserModel {
         throw new Error("User not found", { cause: { type: "not_found" } });
       }
 
-      return user;
+      return {
+        id: user.id,
+        companyId: user.companyId,
+        name: user.name,
+        email: user.email,
+        birthday: user.birthdate,
+        gender: user.gender,
+        schoolYear: user.schoolYear,
+        phone: user.phone,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        deletedAt: user.deletedAt,
+      };
     } catch (error: any) {
       throw error;
     }

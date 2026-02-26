@@ -14,6 +14,9 @@ export const userController = (app: Elysia) => {
           companyId: t.String(),
           name: t.String(),
           email: t.String(),
+          birthday: t.Nullable(t.String()),
+          gender: t.Nullable(t.String()),
+          schoolYear: t.Nullable(t.String()),
           phone: t.Nullable(t.String()),
           createdAt: t.Date(),
           updatedAt: t.Date(),
@@ -29,10 +32,10 @@ export const userController = (app: Elysia) => {
       // Create a new user
       .post(
         "/",
-        async ({ auth, body: { name, email, phone, password }, params: { companyId }, set }) => {
+        async ({ auth, body: { name, email, phone, password, birthday, gender, schoolYear }, params: { companyId }, set }) => {
           try {
             await auth({ requiredPermission: "create_user" });
-            const result = await UserModel.create(companyId, name, email, phone, password);
+            const result = await UserModel.create(companyId, name, email, phone ?? null, password, birthday ?? null, gender ?? null, schoolYear ?? null);
             set.status = 201;
             return result;
           } catch (error) {
@@ -52,8 +55,11 @@ export const userController = (app: Elysia) => {
           body: t.Object({
             name: t.String(),
             email: t.String(),
-            phone: t.Nullable(t.String()),
+            phone: t.Optional(t.Nullable(t.String())),
             password: t.String(),
+            birthday: t.Optional(t.Nullable(t.String())),
+            gender: t.Optional(t.Nullable(t.String())),
+            schoolYear: t.Optional(t.Nullable(t.String())),
           }),
           response: {
             201: t.Ref("user"),
@@ -77,7 +83,7 @@ export const userController = (app: Elysia) => {
           try {
             await auth({ requiredPermission: "read_user", checkCompanyId: true });
 
-            const result = (await UserModel.getAll(companyId, offset, limit, search, sort, order)) as IUser[];
+            const result = await UserModel.getAll(companyId, offset, limit, search, sort, order);
 
             return {
               total: result.length,

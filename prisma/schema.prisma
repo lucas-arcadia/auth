@@ -48,9 +48,11 @@ model User {
   id        String    @id @default(uuid(7)) @db.Char(36)
   name      String    @db.VarChar(255)
   email     String    @db.VarChar(255)
-  birthdate String?
-  phone     String?   @db.VarChar(20)
-  password  String    @db.VarChar(255)
+  birthdate  String?
+  gender     String?   @db.VarChar(50)
+  schoolYear String?   @db.VarChar(50)
+  phone      String?   @db.VarChar(20)
+  password   String    @db.VarChar(255)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?

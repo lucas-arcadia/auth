@@ -104,19 +104,15 @@ export const authController = (app: Elysia) => {
       // Verify Token
       .post(
         "/verify-token",
-        async ({ body: { token }, jwt, set, request }) => {
+        async ({ body: { token }, jwt, set }) => {
           try {
             const payload = await jwt.verify(token);
             if (!payload) {
               throw new Error("Invalid token", { cause: { type: "invalid_token" } });
             }
 
-            const ageValue = payload.age as string;
             return {
-              userId: payload.userId as string,
-              companyId: payload.companyId as string,
-              ein: payload.ein as string,
-              age: ageValue ? Number(ageValue) : null,
+              sucesso: true,
             };
           } catch (error: any) {
             switch (error.cause.type) {
@@ -151,10 +147,7 @@ export const authController = (app: Elysia) => {
           }),
           response: {
             200: t.Object({
-              userId: t.String(),
-              companyId: t.String(),
-              ein: t.String(),
-              age: t.Nullable(t.Number()),
+              sucesso: t.Boolean(),
             }),
             401: t.Object({
               error: t.Ref("error"),

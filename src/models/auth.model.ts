@@ -6,6 +6,8 @@ export interface ILogin {
   companyId: string;
   ein: string;
   age: number | null;
+  gender: string | null;
+  schoolYear: string | null;
 }
 
 export class AuthModel {
@@ -46,6 +48,8 @@ export class AuthModel {
         companyId: user.companyId,
         ein: user.Company.ein,
         age,
+        gender: user.gender,
+        schoolYear: user.schoolYear,
       };
     } catch (error) {
       throw error;
