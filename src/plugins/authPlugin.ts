@@ -2,6 +2,7 @@
 
 import { jwt } from "@elysiajs/jwt";
 import { Elysia } from "elysia";
+import prisma from "../config/database";
 import { userHasPermission } from "../utils/permissions";
 
 interface RouteParams {
@@ -42,13 +43,21 @@ export const authPlugin = (app: Elysia) =>
             throw new Error("Invalid or expired token", { cause: { type: "invalid_token" } });
           }
 
-          // Verificar companyId, se necessário
+          const userId = String(payload.sub);
+
+          // Verificar companyId, se necessário (dados vêm do banco, não do token)
           if (options.checkCompanyId && routeParams.companyId) {
-            // Permitir acesso se o usuário pertence à emrpesa master
-            if (payload.ein === "13019142000142" || payload.companyId === routeParams.companyId) {
-              // Acesso permitido
-              return payload;
-            } else {
+            const user = await prisma.user.findFirst({
+              where: { id: userId, deletedAt: null },
+              include: { Company: { select: { ein: true } } },
+            });
+            if (!user) {
+              set.status = 401;
+              throw new Error("User not found", { cause: { type: "invalid_token" } });
+            }
+            const ein = user.Company?.ein;
+            const companyId = user.companyId;
+            if (ein !== "13019142000142" && companyId !== routeParams.companyId) {
               set.status = 403;
               throw new Error("Forbidden", { cause: { type: "forbidden" } });
             }
@@ -56,15 +65,14 @@ export const authPlugin = (app: Elysia) =>
 
           // Verificar permissão, se especificada
           if (options.requiredPermission) {
-            const hasPermission = await userHasPermission(payload.userId as string, options.requiredPermission);
+            const hasPermission = await userHasPermission(userId, options.requiredPermission);
             if (!hasPermission) {
               set.status = 403;
               throw new Error("Insufficient permissions", { cause: { type: "insufficient_permissions" } });
             }
           }
 
-          // Retornar payload para uso no handler
-          return payload;
+          return { ...payload, userId };
         },
       };
     });

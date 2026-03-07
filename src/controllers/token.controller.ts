@@ -39,7 +39,7 @@ export const tokenController = (app: Elysia) => {
 
           const user = await prisma.user.findFirst({
             where: {
-              id: String(payload.userId),
+              id: String(payload.sub),
               deletedAt: null,
             },
             include: {

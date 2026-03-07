@@ -34,10 +34,7 @@ export const authController = (app: Elysia) => {
 
             return {
               token: await jwt.sign({
-                userId: login.userId,
-                companyId: login.companyId,
-                ein: login.ein,
-                age: String(login.age ?? ""),
+                sub: login.userId,
               }),
             };
           } catch (error: any) {
